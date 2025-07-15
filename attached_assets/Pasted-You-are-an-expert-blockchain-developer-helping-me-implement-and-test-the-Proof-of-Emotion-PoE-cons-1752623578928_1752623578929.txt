@@ -1,0 +1,62 @@
+You are an expert blockchain developer helping me implement and test the Proof of Emotion (PoE) consensus algorithm for EmotionalChain. I've uploaded the core algorithm files to this Replit project.
+
+CONTEXT:
+- I'm building MindScriber, an emotional AI platform with blockchain integration
+- The core innovation is "Proof of Emotion" - the first consensus mechanism based on human emotional states from real biometric data
+- I have the core PoE algorithm (proof-of-emotion-core.js) and HTML test interface ready
+
+YOUR TASKS:
+
+1. **PROJECT SETUP:**
+   - Set up the Replit project structure properly
+   - Install any necessary Node.js dependencies
+   - Configure the project to run the PoE test interface
+   - Make sure the HTML interface can import and use the PoE algorithm
+
+2. **TESTING & VALIDATION:**
+   - Run the PoE algorithm test suite
+   - Verify all consensus calculations work correctly
+   - Test validator registration, emotional proof generation, and consensus reaching
+   - Run stress tests with multiple validators and blocks
+   - Document any bugs or issues found
+
+3. **REAL DATA INTEGRATION:**
+   - Help me integrate real wearable device APIs (start with Fitbit Web API)
+   - Create OAuth flow for users to connect their devices
+   - Replace simulated biometric data with real heart rate, HRV, and activity data
+   - Ensure data authenticity and anti-spoofing measures work
+
+4. **BLOCKCHAIN PREPARATION:**
+   - Prepare the PoE algorithm for integration with a Polygon fork
+   - Create smart contract interfaces for validator registration
+   - Design the EmotionalChain network configuration
+   - Set up Web3 integration points
+
+5. **ENHANCEMENTS:**
+   - Add more sophisticated emotional analysis algorithms
+   - Implement better validator reward calculations
+   - Create advanced anti-spoofing measures
+   - Add network monitoring and analytics
+
+TECHNICAL REQUIREMENTS:
+- Use modern JavaScript/TypeScript
+- Implement proper error handling
+- Add comprehensive logging
+- Make the code production-ready
+- Follow blockchain development best practices
+- Ensure security and data privacy
+
+DELIVERABLES:
+- Working PoE consensus algorithm on Replit
+- Real wearable data integration
+- Test results and validation report
+- Documentation for next development phases
+- Recommendations for blockchain integration
+
+CONSTRAINTS:
+- Focus on the core PoE consensus mechanism first
+- Ensure all code runs properly in Replit environment
+- Prioritize real data over simulated data
+- Make the system scalable and secure
+
+Please start by examining the uploaded files and setting up the project to run the PoE algorithm test interface. Then proceed with testing and real data integration.
