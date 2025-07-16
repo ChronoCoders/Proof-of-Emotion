@@ -134,7 +134,7 @@ export default function Dashboard() {
               <i className="fas fa-flask"></i>
               <span>Testing Suite</span>
             </a>
-            <a href="#analytics" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
+            <a href="/analytics" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
               <i className="fas fa-chart-line"></i>
               <span>Analytics</span>
             </a>
