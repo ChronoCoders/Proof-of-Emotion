@@ -17,14 +17,7 @@ export function useWebSocket() {
     const hostname = window.location.hostname;
     const port = window.location.port;
     
-    // Debug logging
-    console.log('WebSocket URL Debug:', {
-      protocol,
-      hostname,
-      port,
-      host: window.location.host,
-      href: window.location.href
-    });
+    // Debug logging removed - connection working properly
     
     // Replit environment detection - use exact current host
     if (hostname.includes('replit.dev')) {
