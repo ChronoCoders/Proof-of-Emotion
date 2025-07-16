@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 3.7%, 15.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+  
+  /* Custom PoE Colors */
+  --poe-green: hsl(142, 76%, 36%);
+  --poe-blue: hsl(207, 90%, 54%);
+  --poe-purple: hsl(280, 100%, 70%);
+  --poe-pink: hsl(330, 81%, 60%);
+  --poe-yellow: hsl(47, 96%, 53%);
+  --poe-red: hsl(0, 84%, 60%);
+  --poe-slate: hsl(215, 28%, 17%);
+  --poe-slate-dark: hsl(222, 84%, 5%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+  
+  /* Custom scrollbars */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(240, 3.7%, 15.9%);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(240, 5%, 64.9%);
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(240, 5%, 75%);
+  }
+}
+
+@layer components {
+  .gradient-border {
+    background: linear-gradient(135deg, var(--poe-blue), var(--poe-green), var(--poe-pink));
+    padding: 2px;
+    border-radius: 12px;
+  }
+  
+  .gradient-border-content {
+    background: var(--card);
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  
+  .emotional-glow {
+    box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+  }
+  
+  .pulse-slow {
+    animation: pulse 3s infinite;
+  }
+  
+  .bounce-subtle {
+    animation: bounce 2s infinite;
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-in;
+  }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40%, 43% {
+    transform: translateY(-30px);
+  }
+  70% {
+    transform: translateY(-15px);
+  }
+  90% {
+    transform: translateY(-4px);
+  }
+}
