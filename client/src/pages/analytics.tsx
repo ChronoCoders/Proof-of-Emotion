@@ -88,9 +88,9 @@ export default function Analytics() {
   const NetworkIntelligence = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="bg-gray-900 border-green-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
-            <CardTitle className="text-green-400 flex items-center">
+            <CardTitle className="text-cyan-400 flex items-center">
               <Brain className="w-5 h-5 mr-2" />
               Network Emotional Health
             </CardTitle>
@@ -100,7 +100,7 @@ export default function Analytics() {
               <span className="text-gray-300">Network Stress</span>
               <span className="text-red-400 font-bold">{networkData.emotionalIntelligence.networkStress}%</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-2">
+            <div className="w-full bg-slate-900 rounded-full h-2">
               <div 
                 className="bg-red-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkStress}%` }}
@@ -110,7 +110,7 @@ export default function Analytics() {
               <span className="text-gray-300">Network Energy</span>
               <span className="text-yellow-400 font-bold">{networkData.emotionalIntelligence.networkEnergy}%</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-2">
+            <div className="w-full bg-slate-900 rounded-full h-2">
               <div 
                 className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkEnergy}%` }}
@@ -118,18 +118,18 @@ export default function Analytics() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Network Focus</span>
-              <span className="text-blue-400 font-bold">{networkData.emotionalIntelligence.networkFocus}%</span>
+              <span className="text-cyan-400 font-bold">{networkData.emotionalIntelligence.networkFocus}%</span>
             </div>
-            <div className="w-full bg-gray-800 rounded-full h-2">
+            <div className="w-full bg-slate-900 rounded-full h-2">
               <div 
-                className="bg-blue-500 h-2 rounded-full transition-all duration-500"
+                className="bg-cyan-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkFocus}%` }}
               />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-cyan-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-cyan-400 flex items-center">
               <Target className="w-5 h-5 mr-2" />
@@ -147,7 +147,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-yellow-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-yellow-400 flex items-center">
               <Activity className="w-5 h-5 mr-2" />
@@ -166,7 +166,7 @@ export default function Analytics() {
         </Card>
       </div>
 
-      <Card className="bg-gray-900 border-green-500">
+      <Card className="bg-slate-800 border-slate-600">
         <CardHeader>
           <CardTitle className="text-green-400 flex items-center">
             <LineChartIcon className="w-5 h-5 mr-2" />
@@ -177,20 +177,20 @@ export default function Analytics() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={networkData.trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="time" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                <XAxis dataKey="time" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #10B981',
+                    backgroundColor: '#1e293b', 
+                    border: '1px solid #10b981',
                     borderRadius: '8px'
                   }}
                 />
-                <Line type="monotone" dataKey="stress" stroke="#EF4444" strokeWidth={2} />
-                <Line type="monotone" dataKey="energy" stroke="#F59E0B" strokeWidth={2} />
-                <Line type="monotone" dataKey="focus" stroke="#3B82F6" strokeWidth={2} />
-                <Line type="monotone" dataKey="consensus" stroke="#10B981" strokeWidth={2} />
+                <Line type="monotone" dataKey="stress" stroke="#ef4444" strokeWidth={2} />
+                <Line type="monotone" dataKey="energy" stroke="#f59e0b" strokeWidth={2} />
+                <Line type="monotone" dataKey="focus" stroke="#06b6d4" strokeWidth={2} />
+                <Line type="monotone" dataKey="consensus" stroke="#10b981" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -202,7 +202,7 @@ export default function Analytics() {
   const ValidatorAnalytics = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-gray-900 border-green-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-green-400 flex items-center">
               <PieChartIcon className="w-5 h-5 mr-2" />
@@ -247,7 +247,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-cyan-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-cyan-400 flex items-center">
               <Users className="w-5 h-5 mr-2" />
@@ -257,7 +257,7 @@ export default function Analytics() {
           <CardContent>
             <div className="space-y-4">
               {validatorAnalytics.emotionalConsistency.map((validator, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-black font-bold text-sm mr-3">
                       {index + 1}
@@ -278,7 +278,7 @@ export default function Analytics() {
         </Card>
       </div>
 
-      <Card className="bg-gray-900 border-yellow-500">
+      <Card className="bg-slate-800 border-slate-600">
         <CardHeader>
           <CardTitle className="text-yellow-400 flex items-center">
             <BarChart3 className="w-5 h-5 mr-2" />
@@ -289,9 +289,9 @@ export default function Analytics() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={validatorAnalytics.emotionalConsistency}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="validator" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                <XAxis dataKey="validator" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: '#1F2937', 
@@ -311,7 +311,7 @@ export default function Analytics() {
   const EconomicInsights = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-gray-900 border-green-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-green-400 flex items-center">
               <DollarSign className="w-5 h-5 mr-2" />
@@ -359,7 +359,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-cyan-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-cyan-400 flex items-center">
               <TrendingUp className="w-5 h-5 mr-2" />
@@ -370,13 +370,13 @@ export default function Analytics() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={economicMetrics.rewardTrends}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                  <XAxis dataKey="period" stroke="#9CA3AF" />
-                  <YAxis stroke="#9CA3AF" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                  <XAxis dataKey="period" stroke="#94a3b8" />
+                  <YAxis stroke="#94a3b8" />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1F2937', 
-                      border: '1px solid #06B6D4',
+                      backgroundColor: '#1e293b', 
+                      border: '1px solid #06b6d4',
                       borderRadius: '8px'
                     }}
                   />
@@ -394,7 +394,7 @@ export default function Analytics() {
         </Card>
       </div>
 
-      <Card className="bg-gray-900 border-purple-500">
+      <Card className="bg-slate-800 border-slate-600">
         <CardHeader>
           <CardTitle className="text-purple-400 flex items-center">
             <BarChart3 className="w-5 h-5 mr-2" />
@@ -426,9 +426,9 @@ export default function Analytics() {
 
   const PredictiveAnalytics = () => (
     <div className="space-y-6">
-      <Card className="bg-gray-900 border-blue-500">
+      <Card className="bg-slate-800 border-slate-600">
         <CardHeader>
-          <CardTitle className="text-blue-400 flex items-center">
+          <CardTitle className="text-cyan-400 flex items-center">
             <TrendingUp className="w-5 h-5 mr-2" />
             Consensus Success Projections
           </CardTitle>
@@ -437,18 +437,18 @@ export default function Analytics() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={predictiveAnalytics.consensusProjection}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis dataKey="period" stroke="#9CA3AF" />
-                <YAxis stroke="#9CA3AF" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
+                <XAxis dataKey="period" stroke="#94a3b8" />
+                <YAxis stroke="#94a3b8" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1F2937', 
-                    border: '1px solid #3B82F6',
+                    backgroundColor: '#1e293b', 
+                    border: '1px solid #06b6d4',
                     borderRadius: '8px'
                   }}
                 />
-                <Line type="monotone" dataKey="rate" stroke="#3B82F6" strokeWidth={3} />
-                <Line type="monotone" dataKey="confidence" stroke="#10B981" strokeWidth={2} strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="rate" stroke="#06b6d4" strokeWidth={3} />
+                <Line type="monotone" dataKey="confidence" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -456,7 +456,7 @@ export default function Analytics() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-gray-900 border-green-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-green-400 flex items-center">
               <Users className="w-5 h-5 mr-2" />
@@ -485,7 +485,7 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-purple-500">
+        <Card className="bg-slate-800 border-slate-600">
           <CardHeader>
             <CardTitle className="text-purple-400 flex items-center">
               <Target className="w-5 h-5 mr-2" />
@@ -494,19 +494,19 @@ export default function Analytics() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-3 bg-gray-800 rounded-lg">
+              <div className="p-3 bg-slate-900 rounded-lg">
                 <div className="text-green-400 font-semibold mb-1">Network Health</div>
                 <div className="text-gray-300 text-sm">Emotional stability improving by 8.5% monthly</div>
               </div>
-              <div className="p-3 bg-gray-800 rounded-lg">
+              <div className="p-3 bg-slate-900 rounded-lg">
                 <div className="text-yellow-400 font-semibold mb-1">Validator Adoption</div>
                 <div className="text-gray-300 text-sm">97% probability of reaching 60+ validators</div>
               </div>
-              <div className="p-3 bg-gray-800 rounded-lg">
-                <div className="text-blue-400 font-semibold mb-1">Consensus Efficiency</div>
+              <div className="p-3 bg-slate-900 rounded-lg">
+                <div className="text-cyan-400 font-semibold mb-1">Consensus Efficiency</div>
                 <div className="text-gray-300 text-sm">Expected 97% success rate by Q2</div>
               </div>
-              <div className="p-3 bg-gray-800 rounded-lg">
+              <div className="p-3 bg-slate-900 rounded-lg">
                 <div className="text-cyan-400 font-semibold mb-1">Economic Growth</div>
                 <div className="text-gray-300 text-sm">Token value correlation: +0.84 with network health</div>
               </div>
@@ -538,10 +538,10 @@ export default function Analytics() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-slate-950 text-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-green-400 mb-2">EmotionalChain Analytics</h1>
+          <h1 className="text-4xl font-bold text-cyan-400 mb-2">EmotionalChain Analytics</h1>
           <p className="text-gray-400">Deep business intelligence for the world's first emotion-driven blockchain</p>
         </div>
 
@@ -595,7 +595,7 @@ export default function Analytics() {
           {activeTab === 'predictive' && <PredictiveAnalytics />}
         </div>
 
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
+        <div className="bg-slate-800 border border-slate-600 rounded-lg p-6">
           <h3 className="text-xl font-bold text-green-400 mb-4">Research & Academic Export</h3>
           <p className="text-gray-300 mb-4">
             EmotionalChain provides anonymized emotional consensus data for academic research and social impact studies.
