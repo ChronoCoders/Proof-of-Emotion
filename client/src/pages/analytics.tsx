@@ -85,12 +85,32 @@ export default function Analytics() {
 
   const COLORS = ['#00ff00', '#00ffff', '#ffff00', '#ff6b6b', '#4ecdc4'];
 
+  const exportData = () => {
+    const analyticsData = {
+      networkIntelligence: networkData,
+      validatorAnalytics,
+      economicMetrics,
+      predictiveAnalytics,
+      exportDate: new Date().toISOString()
+    };
+    
+    const dataStr = JSON.stringify(analyticsData, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportFileDefaultName = `emotional-chain-analytics-${new Date().toISOString().split('T')[0]}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
   const NetworkIntelligence = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-cyan-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Brain className="w-5 h-5 mr-2" />
               Network Emotional Health
             </CardTitle>
@@ -98,9 +118,9 @@ export default function Analytics() {
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Network Stress</span>
-              <span className="text-red-400 font-bold">{networkData.emotionalIntelligence.networkStress}%</span>
+              <span className="text-muted-foreground font-bold">{networkData.emotionalIntelligence.networkStress}%</span>
             </div>
-            <div className="w-full bg-slate-900 rounded-full h-2">
+            <div className="w-full bg-muted rounded-full h-2">
               <div 
                 className="bg-red-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkStress}%` }}
@@ -108,9 +128,9 @@ export default function Analytics() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Network Energy</span>
-              <span className="text-yellow-400 font-bold">{networkData.emotionalIntelligence.networkEnergy}%</span>
+              <span className="text-muted-foreground font-bold">{networkData.emotionalIntelligence.networkEnergy}%</span>
             </div>
-            <div className="w-full bg-slate-900 rounded-full h-2">
+            <div className="w-full bg-muted rounded-full h-2">
               <div 
                 className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkEnergy}%` }}
@@ -118,9 +138,9 @@ export default function Analytics() {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-300">Network Focus</span>
-              <span className="text-cyan-400 font-bold">{networkData.emotionalIntelligence.networkFocus}%</span>
+              <span className="text-muted-foreground font-bold">{networkData.emotionalIntelligence.networkFocus}%</span>
             </div>
-            <div className="w-full bg-slate-900 rounded-full h-2">
+            <div className="w-full bg-muted rounded-full h-2">
               <div 
                 className="bg-cyan-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${networkData.emotionalIntelligence.networkFocus}%` }}
@@ -129,46 +149,46 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-cyan-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Target className="w-5 h-5 mr-2" />
               Consensus Stability
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <div className="text-4xl font-bold text-cyan-400 mb-2">
+            <div className="text-4xl font-bold text-muted-foreground mb-2">
               {networkData.emotionalIntelligence.consensusStability}%
             </div>
-            <div className="text-gray-400 text-sm">Average Success Rate</div>
-            <div className="mt-4 text-green-400 text-sm">
+            <div className="text-muted-foreground text-sm">Average Success Rate</div>
+            <div className="mt-4 text-muted-foreground text-sm">
               ↑ +2.3% from last week
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-yellow-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Activity className="w-5 h-5 mr-2" />
               Emotional Volatility
             </CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <div className="text-4xl font-bold text-yellow-400 mb-2">
+            <div className="text-4xl font-bold text-muted-foreground mb-2">
               {networkData.emotionalIntelligence.emotionalVolatility}%
             </div>
-            <div className="text-gray-400 text-sm">Volatility Index</div>
-            <div className="mt-4 text-green-400 text-sm">
+            <div className="text-muted-foreground text-sm">Volatility Index</div>
+            <div className="mt-4 text-muted-foreground text-sm">
               ↓ -1.8% (Improving)
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="bg-slate-800 border-slate-600">
+      <Card className="">
         <CardHeader>
-          <CardTitle className="text-green-400 flex items-center">
+          <CardTitle className="text-muted-foreground flex items-center">
             <LineChartIcon className="w-5 h-5 mr-2" />
             24-Hour Emotional Trends
           </CardTitle>
@@ -177,12 +197,12 @@ export default function Analytics() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={networkData.trends}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="time" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                <XAxis dataKey="time" stroke="hsl(var(--muted-foreground))" />
+                <YAxis stroke="hsl(var(--muted-foreground))" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1e293b', 
+                    backgroundColor: 'hsl(var(--card))', 
                     border: '1px solid #10b981',
                     borderRadius: '8px'
                   }}
@@ -202,9 +222,9 @@ export default function Analytics() {
   const ValidatorAnalytics = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-green-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <PieChartIcon className="w-5 h-5 mr-2" />
               Validator Performance Distribution
             </CardTitle>
@@ -240,16 +260,16 @@ export default function Analytics() {
                     />
                     <span className="text-gray-300 text-sm">{item.category}</span>
                   </div>
-                  <span className="text-gray-400 text-sm">{item.percentage}%</span>
+                  <span className="text-muted-foreground text-sm">{item.percentage}%</span>
                 </div>
               ))}
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-cyan-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Users className="w-5 h-5 mr-2" />
               Top Validator Performance
             </CardTitle>
@@ -257,7 +277,7 @@ export default function Analytics() {
           <CardContent>
             <div className="space-y-4">
               {validatorAnalytics.emotionalConsistency.map((validator, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-slate-900 rounded-lg">
+                <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
                   <div className="flex items-center">
                     <div className="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-black font-bold text-sm mr-3">
                       {index + 1}
@@ -268,7 +288,7 @@ export default function Analytics() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-green-400 font-bold">{validator.rewards}</div>
+                    <div className="text-muted-foreground font-bold">{validator.rewards}</div>
                     <div className="text-gray-500 text-sm">EMOTION</div>
                   </div>
                 </div>
@@ -278,9 +298,9 @@ export default function Analytics() {
         </Card>
       </div>
 
-      <Card className="bg-slate-800 border-slate-600">
+      <Card className="">
         <CardHeader>
-          <CardTitle className="text-yellow-400 flex items-center">
+          <CardTitle className="text-muted-foreground flex items-center">
             <BarChart3 className="w-5 h-5 mr-2" />
             Validator Behavior Patterns
           </CardTitle>
@@ -289,12 +309,12 @@ export default function Analytics() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={validatorAnalytics.emotionalConsistency}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="validator" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                <XAxis dataKey="validator" stroke="hsl(var(--muted-foreground))" />
+                <YAxis stroke="hsl(var(--muted-foreground))" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1e293b', 
+                    backgroundColor: 'hsl(var(--card))', 
                     border: '1px solid #F59E0B',
                     borderRadius: '8px'
                   }}
@@ -311,9 +331,9 @@ export default function Analytics() {
   const EconomicInsights = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-green-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <DollarSign className="w-5 h-5 mr-2" />
               Token Distribution
             </CardTitle>
@@ -350,7 +370,7 @@ export default function Analytics() {
                     <span className="text-gray-300 text-sm">{item.category}</span>
                   </div>
                   <div className="text-right">
-                    <div className="text-gray-400 text-sm">{item.value.toLocaleString()}</div>
+                    <div className="text-muted-foreground text-sm">{item.value.toLocaleString()}</div>
                     <div className="text-gray-500 text-xs">{item.percentage}%</div>
                   </div>
                 </div>
@@ -359,9 +379,9 @@ export default function Analytics() {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-cyan-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <TrendingUp className="w-5 h-5 mr-2" />
               Reward Trends
             </CardTitle>
@@ -370,12 +390,12 @@ export default function Analytics() {
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={economicMetrics.rewardTrends}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                  <XAxis dataKey="period" stroke="#94a3b8" />
-                  <YAxis stroke="#94a3b8" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                  <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" />
+                  <YAxis stroke="hsl(var(--muted-foreground))" />
                   <Tooltip 
                     contentStyle={{ 
-                      backgroundColor: '#1e293b', 
+                      backgroundColor: 'hsl(var(--card))', 
                       border: '1px solid #06b6d4',
                       borderRadius: '8px'
                     }}
@@ -394,9 +414,9 @@ export default function Analytics() {
         </Card>
       </div>
 
-      <Card className="bg-slate-800 border-slate-600">
+      <Card className="">
         <CardHeader>
-          <CardTitle className="text-purple-400 flex items-center">
+          <CardTitle className="text-muted-foreground flex items-center">
             <BarChart3 className="w-5 h-5 mr-2" />
             Economic Health Indicators
           </CardTitle>
@@ -404,19 +424,19 @@ export default function Analytics() {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400 mb-2">1.2M</div>
-              <div className="text-gray-400 text-sm">Total Staked EMOTION</div>
-              <div className="text-green-400 text-xs mt-1">↑ +8.5% this month</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-2">1.2M</div>
+              <div className="text-muted-foreground text-sm">Total Staked EMOTION</div>
+              <div className="text-muted-foreground text-xs mt-1">↑ +8.5% this month</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400 mb-2">$2.45</div>
-              <div className="text-gray-400 text-sm">Average Token Value</div>
-              <div className="text-yellow-400 text-xs mt-1">↑ +12.3% this week</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-2">$2.45</div>
+              <div className="text-muted-foreground text-sm">Average Token Value</div>
+              <div className="text-muted-foreground text-xs mt-1">↑ +12.3% this week</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400 mb-2">34.2%</div>
-              <div className="text-gray-400 text-sm">Network Utilization</div>
-              <div className="text-blue-400 text-xs mt-1">↑ +5.1% trending up</div>
+              <div className="text-2xl font-bold text-muted-foreground mb-2">34.2%</div>
+              <div className="text-muted-foreground text-sm">Network Utilization</div>
+              <div className="text-muted-foreground text-xs mt-1">↑ +5.1% trending up</div>
             </div>
           </div>
         </CardContent>
@@ -426,9 +446,9 @@ export default function Analytics() {
 
   const PredictiveAnalytics = () => (
     <div className="space-y-6">
-      <Card className="bg-slate-800 border-slate-600">
+      <Card className="">
         <CardHeader>
-          <CardTitle className="text-cyan-400 flex items-center">
+          <CardTitle className="text-muted-foreground flex items-center">
             <TrendingUp className="w-5 h-5 mr-2" />
             Consensus Success Projections
           </CardTitle>
@@ -437,12 +457,12 @@ export default function Analytics() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={predictiveAnalytics.consensusProjection}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
-                <XAxis dataKey="period" stroke="#94a3b8" />
-                <YAxis stroke="#94a3b8" />
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+                <XAxis dataKey="period" stroke="hsl(var(--muted-foreground))" />
+                <YAxis stroke="hsl(var(--muted-foreground))" />
                 <Tooltip 
                   contentStyle={{ 
-                    backgroundColor: '#1e293b', 
+                    backgroundColor: 'hsl(var(--card))', 
                     border: '1px solid #06b6d4',
                     borderRadius: '8px'
                   }}
@@ -456,9 +476,9 @@ export default function Analytics() {
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-green-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Users className="w-5 h-5 mr-2" />
               Network Growth Forecast
             </CardTitle>
@@ -467,47 +487,47 @@ export default function Analytics() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Current Validators</span>
-                <span className="text-green-400 font-bold">{predictiveAnalytics.networkGrowth.currentValidators}</span>
+                <span className="text-muted-foreground font-bold">{predictiveAnalytics.networkGrowth.currentValidators}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Projected (3 months)</span>
-                <span className="text-yellow-400 font-bold">{predictiveAnalytics.networkGrowth.projectedValidators}</span>
+                <span className="text-muted-foreground font-bold">{predictiveAnalytics.networkGrowth.projectedValidators}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Growth Rate</span>
-                <span className="text-blue-400 font-bold">{predictiveAnalytics.networkGrowth.growthRate}%</span>
+                <span className="text-muted-foreground font-bold">{predictiveAnalytics.networkGrowth.growthRate}%</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-300">Confidence Level</span>
-                <span className="text-cyan-400 font-bold">{predictiveAnalytics.networkGrowth.confidenceLevel}%</span>
+                <span className="text-muted-foreground font-bold">{predictiveAnalytics.networkGrowth.confidenceLevel}%</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-800 border-slate-600">
+        <Card className="">
           <CardHeader>
-            <CardTitle className="text-purple-400 flex items-center">
+            <CardTitle className="text-muted-foreground flex items-center">
               <Target className="w-5 h-5 mr-2" />
               AI Predictions Summary
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="p-3 bg-slate-900 rounded-lg">
-                <div className="text-green-400 font-semibold mb-1">Network Health</div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="text-muted-foreground font-semibold mb-1">Network Health</div>
                 <div className="text-gray-300 text-sm">Emotional stability improving by 8.5% monthly</div>
               </div>
-              <div className="p-3 bg-slate-900 rounded-lg">
-                <div className="text-yellow-400 font-semibold mb-1">Validator Adoption</div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="text-muted-foreground font-semibold mb-1">Validator Adoption</div>
                 <div className="text-gray-300 text-sm">97% probability of reaching 60+ validators</div>
               </div>
-              <div className="p-3 bg-slate-900 rounded-lg">
-                <div className="text-cyan-400 font-semibold mb-1">Consensus Efficiency</div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="text-muted-foreground font-semibold mb-1">Consensus Efficiency</div>
                 <div className="text-gray-300 text-sm">Expected 97% success rate by Q2</div>
               </div>
-              <div className="p-3 bg-slate-900 rounded-lg">
-                <div className="text-cyan-400 font-semibold mb-1">Economic Growth</div>
+              <div className="p-3 bg-muted rounded-lg">
+                <div className="text-muted-foreground font-semibold mb-1">Economic Growth</div>
                 <div className="text-gray-300 text-sm">Token value correlation: +0.84 with network health</div>
               </div>
             </div>
@@ -516,103 +536,81 @@ export default function Analytics() {
       </div>
     </div>
   );
-
-  const exportData = () => {
-    const analyticsData = {
-      networkIntelligence: networkData,
-      validatorAnalytics,
-      economicMetrics,
-      predictiveAnalytics,
-      exportDate: new Date().toISOString()
-    };
-    
-    const dataStr = JSON.stringify(analyticsData, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = `emotional-chain-analytics-${new Date().toISOString().split('T')[0]}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
-  };
-
+  
   return (
-    <div className="min-h-screen bg-slate-950 text-gray-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-cyan-400 mb-2">EmotionalChain Analytics</h1>
-          <p className="text-gray-400">Deep business intelligence for the world's first emotion-driven blockchain</p>
-        </div>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex flex-col space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">EmotionalChain Analytics</h1>
+        <p className="text-muted-foreground">Deep business intelligence for the world's first emotion-driven blockchain</p>
+      </div>
 
-        <div className="flex flex-wrap gap-4 mb-8">
-          <Button
-            onClick={() => setActiveTab('network')}
-            variant={activeTab === 'network' ? 'default' : 'outline'}
-            className={activeTab === 'network' ? 'bg-green-600 hover:bg-green-700' : 'border-green-500 text-green-400 hover:bg-green-600'}
-          >
-            <Brain className="w-4 h-4 mr-2" />
-            Network Intelligence
-          </Button>
-          <Button
-            onClick={() => setActiveTab('validators')}
-            variant={activeTab === 'validators' ? 'default' : 'outline'}
-            className={activeTab === 'validators' ? 'bg-cyan-600 hover:bg-cyan-700' : 'border-cyan-500 text-cyan-400 hover:bg-cyan-600'}
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Validator Analytics
-          </Button>
-          <Button
-            onClick={() => setActiveTab('economics')}
-            variant={activeTab === 'economics' ? 'default' : 'outline'}
-            className={activeTab === 'economics' ? 'bg-yellow-600 hover:bg-yellow-700' : 'border-yellow-500 text-yellow-400 hover:bg-yellow-600'}
-          >
-            <DollarSign className="w-4 h-4 mr-2" />
-            Economic Insights
-          </Button>
-          <Button
-            onClick={() => setActiveTab('predictive')}
-            variant={activeTab === 'predictive' ? 'default' : 'outline'}
-            className={activeTab === 'predictive' ? 'bg-blue-600 hover:bg-blue-700' : 'border-blue-500 text-blue-400 hover:bg-blue-600'}
-          >
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Predictive Analytics
-          </Button>
-          <Button
-            onClick={exportData}
-            variant="outline"
-            className="border-purple-500 text-purple-400 hover:bg-purple-600 ml-auto"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export Data
-          </Button>
-        </div>
+      <div className="flex flex-wrap gap-4 mb-8">
+        <Button
+          onClick={() => setActiveTab('network')}
+          variant={activeTab === 'network' ? 'default' : 'outline'}
+        >
+          <Brain className="w-4 h-4 mr-2" />
+          Network Intelligence
+        </Button>
+        <Button
+          onClick={() => setActiveTab('validators')}
+          variant={activeTab === 'validators' ? 'default' : 'outline'}
+        >
+          <Users className="w-4 h-4 mr-2" />
+          Validator Analytics
+        </Button>
+        <Button
+          onClick={() => setActiveTab('economics')}
+          variant={activeTab === 'economics' ? 'default' : 'outline'}
+        >
+          <DollarSign className="w-4 h-4 mr-2" />
+          Economic Insights
+        </Button>
+        <Button
+          onClick={() => setActiveTab('predictive')}
+          variant={activeTab === 'predictive' ? 'default' : 'outline'}
+        >
+          <TrendingUp className="w-4 h-4 mr-2" />
+          Predictive Analytics
+        </Button>
+        <Button
+          onClick={exportData}
+          variant="outline"
+          className="ml-auto"
+        >
+          <Download className="w-4 h-4 mr-2" />
+          Export Data
+        </Button>
+      </div>
 
-        <div className="mb-8">
-          {activeTab === 'network' && <NetworkIntelligence />}
-          {activeTab === 'validators' && <ValidatorAnalytics />}
-          {activeTab === 'economics' && <EconomicInsights />}
-          {activeTab === 'predictive' && <PredictiveAnalytics />}
-        </div>
+      <div className="mb-8">
+        {activeTab === 'network' && <NetworkIntelligence />}
+        {activeTab === 'validators' && <ValidatorAnalytics />}
+        {activeTab === 'economics' && <EconomicInsights />}
+        {activeTab === 'predictive' && <PredictiveAnalytics />}
+      </div>
 
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-6">
-          <h3 className="text-xl font-bold text-green-400 mb-4">Research & Academic Export</h3>
-          <p className="text-gray-300 mb-4">
+      <Card>
+        <CardHeader>
+          <CardTitle>Research & Academic Export</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground mb-4">
             EmotionalChain provides anonymized emotional consensus data for academic research and social impact studies.
           </p>
           <div className="flex gap-4">
-            <Button variant="outline" className="border-green-500 text-green-400 hover:bg-green-600">
+            <Button variant="outline">
               Generate Research Dataset
             </Button>
-            <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-600">
+            <Button variant="outline">
               API Documentation
             </Button>
-            <Button variant="outline" className="border-yellow-500 text-yellow-400 hover:bg-yellow-600">
+            <Button variant="outline">
               Privacy Guidelines
             </Button>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
