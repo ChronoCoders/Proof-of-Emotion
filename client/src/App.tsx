@@ -9,6 +9,7 @@ import ConsensusPage from "@/pages/consensus";
 import BiometricsPage from "@/pages/biometrics";
 import TestingSuitePage from "@/pages/testing-suite";
 import AnalyticsPage from "@/pages/analytics";
+import ConsensusDemoPage from "@/pages/consensus-demo";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/biometrics" component={BiometricsPage} />
       <Route path="/testing-suite" component={TestingSuitePage} />
       <Route path="/analytics" component={AnalyticsPage} />
+      <Route path="/consensus-demo" component={ConsensusDemoPage} />
       <Route component={NotFound} />
     </Switch>
   );
