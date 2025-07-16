@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import ValidatorsPage from "@/pages/validators";
+import ConsensusPage from "@/pages/consensus";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -12,6 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/validators" component={ValidatorsPage} />
+      <Route path="/consensus" component={ConsensusPage} />
       <Route component={NotFound} />
     </Switch>
   );
