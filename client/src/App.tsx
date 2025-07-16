@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Dashboard from "@/pages/dashboard";
 import ValidatorsPage from "@/pages/validators";
 import ConsensusPage from "@/pages/consensus";
+import BiometricsPage from "@/pages/biometrics";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/validators" component={ValidatorsPage} />
       <Route path="/consensus" component={ConsensusPage} />
+      <Route path="/biometrics" component={BiometricsPage} />
       <Route component={NotFound} />
     </Switch>
   );
