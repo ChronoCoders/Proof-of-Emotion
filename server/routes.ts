@@ -102,7 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 10;
       const blocks = await storage.getLatestConsensusBlocks(limit);
       res.json(blocks);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -115,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Consensus block not found' });
       }
       res.json(block);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -125,7 +125,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const stats = await storage.getNetworkStats();
       res.json(stats);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -135,7 +135,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const limit = parseInt(req.query.limit as string) || 50;
       const activities = await storage.getRecentNetworkActivity(limit);
       res.json(activities);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -150,7 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const authUrl = fitbitService.getAuthUrl(validatorAddress as string);
       res.json({ authUrl });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -206,7 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       websocketService.broadcastBiometricUpdate({ validatorAddress, data: enrichedData });
       res.json(enrichedData);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -237,7 +237,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       websocketService.broadcastBiometricUpdate({ validatorAddress, data: enrichedData });
       
       res.json({ biometricData: enrichedData, emotionalProof: proof });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -279,7 +279,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
       
       res.json({ message: 'Stress test completed', results });
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
