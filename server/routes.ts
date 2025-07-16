@@ -284,5 +284,138 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Data Export Routes for External Systems
+  app.get('/api/export/validators', async (req, res) => {
+    try {
+      const format = req.query.format || 'json';
+      const validators = await storage.getActiveValidators();
+      
+      if (format === 'csv') {
+        const csvHeader = 'id,address,stake,biometricDevice,joinedAt,reputation,isActive\n';
+        const csvData = validators.map(v => 
+          `${v.id},${v.address},${v.stake},${v.biometricDevice},${v.joinedAt},${v.reputation},${v.isActive}`
+        ).join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="validators_${new Date().toISOString().split('T')[0]}.csv"`);
+        res.send(csvHeader + csvData);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="validators_${new Date().toISOString().split('T')[0]}.json"`);
+        res.json({
+          exportDate: new Date().toISOString(),
+          totalValidators: validators.length,
+          data: validators
+        });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get('/api/export/consensus', async (req, res) => {
+    try {
+      const format = req.query.format || 'json';
+      const limit = parseInt(req.query.limit as string) || 100;
+      const blocks = await storage.getLatestConsensusBlocks(limit);
+      
+      if (format === 'csv') {
+        const csvHeader = 'id,blockHeight,timestamp,networkStress,networkEnergy,networkFocus,networkAuthenticity,agreementScore,participatingValidators,totalStake,consensusReached\n';
+        const csvData = blocks.map(b => 
+          `${b.id},${b.blockHeight},${b.timestamp},${b.networkStress},${b.networkEnergy},${b.networkFocus},${b.networkAuthenticity},${b.agreementScore},${b.participatingValidators},${b.totalStake},${b.consensusReached}`
+        ).join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="consensus_blocks_${new Date().toISOString().split('T')[0]}.csv"`);
+        res.send(csvHeader + csvData);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="consensus_blocks_${new Date().toISOString().split('T')[0]}.json"`);
+        res.json({
+          exportDate: new Date().toISOString(),
+          totalBlocks: blocks.length,
+          data: blocks
+        });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get('/api/export/emotional-proofs', async (req, res) => {
+    try {
+      const format = req.query.format || 'json';
+      const proofs = await storage.getValidEmotionalProofs(poeAlgorithm.validationWindow * 10); // Extended window for export
+      
+      if (format === 'csv') {
+        const csvHeader = 'id,validatorAddress,timestamp,heartRate,hrv,stressLevel,energyLevel,focusLevel,authenticityScore\n';
+        const csvData = proofs.map(p => 
+          `${p.id},${p.validatorAddress},${p.timestamp},${p.heartRate},${p.hrv || 'N/A'},${p.stressLevel},${p.energyLevel},${p.focusLevel},${p.authenticityScore}`
+        ).join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="emotional_proofs_${new Date().toISOString().split('T')[0]}.csv"`);
+        res.send(csvHeader + csvData);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="emotional_proofs_${new Date().toISOString().split('T')[0]}.json"`);
+        res.json({
+          exportDate: new Date().toISOString(),
+          totalProofs: proofs.length,
+          data: proofs
+        });
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.get('/api/export/network-analytics', async (req, res) => {
+    try {
+      const format = req.query.format || 'json';
+      const stats = await storage.getNetworkStats();
+      const activities = await storage.getRecentNetworkActivity(1000);
+      const validators = await storage.getActiveValidators();
+      const blocks = await storage.getLatestConsensusBlocks(50);
+      
+      const analyticsData = {
+        networkStats: stats,
+        validators,
+        recentBlocks: blocks,
+        networkActivity: activities,
+        exportMetadata: {
+          exportDate: new Date().toISOString(),
+          totalValidators: validators.length,
+          totalBlocks: blocks.length,
+          totalActivities: activities.length
+        }
+      };
+      
+      if (format === 'csv') {
+        // For CSV, we'll export just the network stats summary
+        const csvData = [
+          'metric,value',
+          `totalValidators,${stats.totalValidators}`,
+          `totalStake,${stats.totalStake}`,
+          `recentConsensusRate,${stats.recentConsensusRate}`,
+          `averageNetworkStress,${stats.averageNetworkStress}`,
+          `averageNetworkEnergy,${stats.averageNetworkEnergy}`,
+          `averageNetworkFocus,${stats.averageNetworkFocus}`,
+          `exportDate,${new Date().toISOString()}`
+        ].join('\n');
+        
+        res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Content-Disposition', `attachment; filename="network_analytics_${new Date().toISOString().split('T')[0]}.csv"`);
+        res.send(csvData);
+      } else {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-Disposition', `attachment; filename="network_analytics_${new Date().toISOString().split('T')[0]}.json"`);
+        res.json(analyticsData);
+      }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
   return httpServer;
 }
