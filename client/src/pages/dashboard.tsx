@@ -123,10 +123,6 @@ export default function Dashboard() {
               <span>Validators</span>
             </a>
             <a href="/consensus" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
-              <i className="fas fa-brain"></i>
-              <span>Consensus</span>
-            </a>
-            <a href="#consensus" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
               <i className="fas fa-handshake"></i>
               <span>Consensus</span>
             </a>
