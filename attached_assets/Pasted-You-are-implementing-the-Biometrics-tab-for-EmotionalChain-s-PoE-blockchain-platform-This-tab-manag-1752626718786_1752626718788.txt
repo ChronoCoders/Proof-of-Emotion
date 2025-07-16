@@ -1,0 +1,70 @@
+You are implementing the Biometrics tab for EmotionalChain's PoE blockchain platform. This tab manages real-time biometric data from wearable devices and converts it into emotional intelligence for blockchain consensus.
+
+CONTEXT:
+- Real biometric data flows from Fitbit, Apple Watch, Samsung Health, Garmin devices
+- Raw biometric data is processed into emotional metrics (stress, energy, focus)
+- Anti-spoofing measures ensure data authenticity and prevent manipulation
+- Biometric data quality directly impacts validator rewards and consensus weight
+
+FEATURES TO IMPLEMENT:
+
+1. **LIVE BIOMETRIC DATA STREAMS:**
+   - Real-time heart rate monitoring with BPM visualization
+   - Heart Rate Variability (HRV) trends and analysis
+   - Skin conductance and stress response indicators
+   - Movement and activity level tracking
+   - Sleep quality and recovery metrics
+   - Multi-device data aggregation and normalization
+
+2. **EMOTIONAL INTELLIGENCE PROCESSING:**
+   - Raw biometric → emotional metrics conversion visualization
+   - Stress level calculation from HR, HRV, and skin conductance
+   - Energy level analysis from activity and heart rate patterns
+   - Focus level determination from HRV and movement stillness
+   - Real-time emotional state classification and confidence scoring
+
+3. **DATA AUTHENTICITY VERIFICATION:**
+   - Anti-spoofing detection algorithms with confidence scores
+   - Biometric data consistency analysis across time periods
+   - Device signature verification and tampering detection
+   - Natural variation analysis (detecting artificially perfect data)
+   - Temporal correlation checks and anomaly detection
+   - Authenticity score impact on validator consensus weight
+
+4. **WEARABLE DEVICE MANAGEMENT:**
+   - Device connection status and battery monitoring
+   - OAuth integration for Fitbit, Apple Health, Samsung Health, Garmin
+   - Data sync frequency and quality monitoring
+   - Device calibration and accuracy verification
+   - Multi-device conflict resolution and data prioritization
+
+5. **BIOMETRIC ANALYTICS DASHBOARD:**
+   - Historical biometric trends and patterns
+   - Emotional pattern recognition and prediction
+   - Validator biometric health scoring
+   - Correlation analysis between biometrics and consensus performance
+   - Personalized biometric insights and recommendations
+
+6. **DATA PRIVACY & SECURITY:**
+   - On-device biometric data encryption
+   - Zero-knowledge proof generation for privacy
+   - Selective data sharing permissions
+   - Biometric data retention policies
+   - GDPR/HIPAA compliance indicators
+
+TECHNICAL REQUIREMENTS:
+- Real-time biometric data processing (sub-second latency)
+- Integration with multiple wearable device APIs
+- Advanced signal processing for noise reduction
+- Machine learning models for emotional state classification
+- Secure biometric data handling and encryption
+- High-frequency data visualization (100Hz+ sample rates)
+
+VISUALIZATION ELEMENTS:
+- Real-time biometric waveforms (ECG-style heart rate)
+- Emotional state evolution over time
+- Anti-spoofing confidence indicators
+- Device connectivity status dashboard
+- Biometric quality scoring meters
+
+This tab proves that EmotionalChain uses REAL biometric data, not simulated - making it the most authentic human-centered blockchain ever created.
