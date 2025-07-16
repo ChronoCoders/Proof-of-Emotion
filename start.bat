@@ -69,6 +69,9 @@ echo Available endpoints:
 echo   - Web Interface: http://localhost:5000
 echo   - API Base: http://localhost:5000/api
 echo   - WebSocket: ws://localhost:5000/ws
+echo   - Analytics Dashboard: http://localhost:5000/analytics
+echo   - Consensus Monitor: http://localhost:5000/consensus
+echo   - Biometrics Manager: http://localhost:5000/biometrics
 echo.
 echo Press Ctrl+C to stop the server
 echo.

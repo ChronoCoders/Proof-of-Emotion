@@ -15,12 +15,21 @@ export function useWebSocket() {
   const connect = () => {
     try {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      const wsUrl = `${protocol}//${window.location.host}/ws`;
+      // Handle different environments properly
+      let wsUrl: string;
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        // Development environment
+        wsUrl = `${protocol}//${window.location.hostname}:5000/ws`;
+      } else {
+        // Production environment (Replit)
+        wsUrl = `${protocol}//${window.location.host}/ws`;
+      }
       
+      console.log('Attempting WebSocket connection to:', wsUrl);
       socketRef.current = new WebSocket(wsUrl);
       
       socketRef.current.onopen = () => {
-        console.log('WebSocket connected');
+        console.log('WebSocket connected to:', wsUrl);
         setIsConnected(true);
       };
       
@@ -33,23 +42,31 @@ export function useWebSocket() {
         }
       };
       
-      socketRef.current.onclose = () => {
-        console.log('WebSocket disconnected');
+      socketRef.current.onclose = (event) => {
+        console.log('WebSocket disconnected:', event.code, event.reason);
         setIsConnected(false);
         
         // Attempt to reconnect after 3 seconds
         reconnectTimeoutRef.current = setTimeout(() => {
+          console.log('Attempting to reconnect WebSocket...');
           connect();
         }, 3000);
       };
       
       socketRef.current.onerror = (error) => {
         console.error('WebSocket error:', error);
+        console.error('Failed to connect to WebSocket URL:', wsUrl);
         setIsConnected(false);
       };
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
       setIsConnected(false);
+      
+      // Attempt to reconnect after 5 seconds on connection failure
+      reconnectTimeoutRef.current = setTimeout(() => {
+        console.log('Retrying WebSocket connection after failure...');
+        connect();
+      }, 5000);
     }
   };
 
