@@ -12,17 +12,43 @@ export function useWebSocket() {
   const socketRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const getWebSocketUrl = () => {
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const hostname = window.location.hostname;
+    const port = window.location.port;
+    
+    // Debug logging
+    console.log('WebSocket URL Debug:', {
+      protocol,
+      hostname,
+      port,
+      host: window.location.host,
+      href: window.location.href
+    });
+    
+    // Replit environment detection - use exact current host
+    if (hostname.includes('replit.dev')) {
+      return `${protocol}//${window.location.host}/ws`;
+    }
+    
+    // Local development environment
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return 'ws://localhost:5000/ws';
+    }
+    
+    // Production environment
+    return `${protocol}//${window.location.host}/ws`;
+  };
+
   const connect = () => {
     try {
-      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-      // Handle different environments properly
-      let wsUrl: string;
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        // Development environment
-        wsUrl = `${protocol}//${window.location.hostname}:5000/ws`;
-      } else {
-        // Production environment (Replit)
-        wsUrl = `${protocol}//${window.location.host}/ws`;
+      const wsUrl = getWebSocketUrl();
+      
+      // Validate URL before attempting connection
+      if (!wsUrl || wsUrl.includes('undefined')) {
+        console.error('Invalid WebSocket URL:', wsUrl);
+        setIsConnected(false);
+        return;
       }
       
       console.log('Attempting WebSocket connection to:', wsUrl);
@@ -57,6 +83,11 @@ export function useWebSocket() {
         console.error('WebSocket error:', error);
         console.error('Failed to connect to WebSocket URL:', wsUrl);
         setIsConnected(false);
+        
+        // Close the socket if it's in a bad state
+        if (socketRef.current) {
+          socketRef.current.close();
+        }
       };
     } catch (error) {
       console.error('Failed to connect to WebSocket:', error);
@@ -69,6 +100,23 @@ export function useWebSocket() {
       }, 5000);
     }
   };
+
+  // Add connection validation
+  const validateConnection = () => {
+    if (socketRef.current) {
+      const state = socketRef.current.readyState;
+      if (state === WebSocket.CLOSING || state === WebSocket.CLOSED) {
+        setIsConnected(false);
+        connect();
+      }
+    }
+  };
+
+  // Periodic connection health check
+  useEffect(() => {
+    const healthCheck = setInterval(validateConnection, 30000); // Check every 30 seconds
+    return () => clearInterval(healthCheck);
+  }, []);
 
   useEffect(() => {
     connect();
