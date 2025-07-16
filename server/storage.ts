@@ -95,6 +95,8 @@ export class MemStorage implements IStorage {
       ...insertProof,
       id: this.currentProofId++,
       timestamp: new Date(),
+      hrv: insertProof.hrv ?? null,
+      rawBiometricData: insertProof.rawBiometricData ?? null,
     };
     this.emotionalProofs.set(proof.id, proof);
     return proof;
@@ -119,6 +121,7 @@ export class MemStorage implements IStorage {
       ...insertBlock,
       id: this.currentBlockId++,
       timestamp: new Date(),
+      validatorProofs: insertBlock.validatorProofs ?? null,
     };
     this.consensusBlocks.set(block.blockHeight, block);
     return block;
@@ -139,6 +142,7 @@ export class MemStorage implements IStorage {
       ...insertActivity,
       id: this.currentActivityId++,
       timestamp: new Date(),
+      metadata: insertActivity.metadata ?? null,
     };
     this.networkActivities.unshift(activity);
     // Keep only last 1000 activities

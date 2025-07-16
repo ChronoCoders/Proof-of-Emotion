@@ -114,11 +114,11 @@ export default function Dashboard() {
         {/* Sidebar */}
         <aside className="w-64 bg-slate-800 border-r border-slate-700 p-4">
           <nav className="space-y-2">
-            <a href="#dashboard" className="flex items-center space-x-3 px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg border border-blue-500/30">
+            <a href="/" className="flex items-center space-x-3 px-3 py-2 bg-blue-600/20 text-blue-400 rounded-lg border border-blue-500/30">
               <i className="fas fa-tachometer-alt"></i>
               <span>Dashboard</span>
             </a>
-            <a href="#validators" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
+            <a href="/validators" className="flex items-center space-x-3 px-3 py-2 text-gray-400 hover:text-gray-200 hover:bg-slate-700 rounded-lg transition-colors">
               <i className="fas fa-users"></i>
               <span>Validators</span>
             </a>

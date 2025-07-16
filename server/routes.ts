@@ -24,7 +24,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       websocketService.broadcastValidatorUpdate(validator);
       res.json(validator);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   });
@@ -33,7 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const validators = await storage.getActiveValidators();
       res.json(validators);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -45,7 +45,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'Validator not found' });
       }
       res.json(validator);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -58,7 +58,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       websocketService.broadcastEmotionalProof(proof);
       res.json(proof);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   });
@@ -67,7 +67,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const proofs = await storage.getValidEmotionalProofs(poeAlgorithm.validationWindow);
       res.json(proofs);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -79,7 +79,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: 'No proof found for validator' });
       }
       res.json(proof);
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({ message: error.message });
     }
   });
@@ -92,7 +92,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       websocketService.broadcastConsensusResult(consensus);
       res.json(consensus);
-    } catch (error) {
+    } catch (error: any) {
       res.status(400).json({ message: error.message });
     }
   });
