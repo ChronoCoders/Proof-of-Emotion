@@ -197,7 +197,7 @@ export default function ConsensusPage() {
             <Button
               onClick={runConsensusTest}
               disabled={isRunningConsensus}
-              className="bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 flex items-center justify-center"
             >
               {isRunningConsensus ? (
                 <>
@@ -214,7 +214,7 @@ export default function ConsensusPage() {
             <Button
               onClick={runStressTest}
               variant="outline"
-              className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20"
+              className="border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 flex items-center justify-center"
             >
               <i className="fas fa-bolt mr-2"></i>
               Stress Test
@@ -416,7 +416,7 @@ export default function ConsensusPage() {
                       <p className="text-gray-400 mb-6">
                         Run your first emotional consensus to see the block timeline.
                       </p>
-                      <Button onClick={runConsensusTest} className="bg-purple-600 hover:bg-purple-700">
+                      <Button onClick={runConsensusTest} className="bg-purple-600 hover:bg-purple-700 flex items-center justify-center">
                         <i className="fas fa-brain mr-2"></i>
                         Start Consensus
                       </Button>
@@ -580,7 +580,7 @@ export default function ConsensusPage() {
                     <Button
                       onClick={runConsensusTest}
                       disabled={isRunningConsensus}
-                      className="w-full bg-purple-600 hover:bg-purple-700"
+                      className="w-full bg-purple-600 hover:bg-purple-700 flex items-center justify-center"
                     >
                       {isRunningConsensus ? (
                         <>
@@ -598,7 +598,7 @@ export default function ConsensusPage() {
                     <Button
                       onClick={runStressTest}
                       variant="outline"
-                      className="w-full border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20"
+                      className="w-full border-yellow-500/30 text-yellow-400 hover:bg-yellow-500/20 flex items-center justify-center"
                     >
                       <i className="fas fa-bolt mr-2"></i>
                       Run Stress Test (10 rounds)
