@@ -1,5 +1,7 @@
 import { storage } from "../storage";
-import type { InsertEmotionalProof, InsertConsensusBlock } from "@shared/schema";
+import type { InsertEmotionalProof, InsertConsensusBlock } from "../../shared/schema";
+import { spawn } from 'child_process';
+import path from 'path';
 
 export interface BiometricData {
   heartRate: number;
@@ -7,21 +9,65 @@ export interface BiometricData {
   skinConductance?: number;
   movement?: number;
   timestamp: number;
+  respiratoryRate?: number;
+  temperature?: number;
+  accelerationX?: number;
+  accelerationY?: number;
+  accelerationZ?: number;
+  ambientLight?: number;
 }
 
 export interface EmotionalMetrics {
   stress: number;
   energy: number;
   focus: number;
+  authenticity: number;
+  confidence: number;
+  emotionCategory: string;
+  mlPrediction?: number;
+}
+
+export interface MLResponse {
+  stress: number;
+  energy: number;
+  focus: number;
+  authenticity: number;
+  confidence: number;
+  emotion_category: string;
+  ml_prediction?: number;
+  consensus_ready?: boolean;
+  readiness_score?: number;
+  ml_used?: boolean;
+  error?: string;
 }
 
 export class ProofOfEmotion {
-  public readonly name = "Proof of Emotion (PoE)";
-  public readonly version = "1.0.0";
+  public readonly name = "Proof of Emotion (PoE) with AI";
+  public readonly version = "2.0.0";
   public readonly consensusThreshold = 67;
   public readonly validationWindow = 300000; // 5 minutes
   public readonly minValidators = 3;
   public readonly maxValidators = 21;
+  private mlEngineEnabled = false;
+  private mlModelPath: string;
+
+  constructor() {
+    this.mlModelPath = path.join(process.cwd(), 'ml-engine', 'models', 'emotionalchain_models.pkl');
+    this.initializeMLEngine();
+  }
+
+  private async initializeMLEngine() {
+    try {
+      // Check if ML models exist
+      const fs = await import('fs').then(module => module.promises);
+      await fs.access(this.mlModelPath);
+      this.mlEngineEnabled = true;
+      console.log('🧠 EmotionalChain: ML Engine initialized successfully');
+    } catch (error) {
+      console.log('⚠️ EmotionalChain: ML Engine not available, using rule-based fallback');
+      this.mlEngineEnabled = false;
+    }
+  }
 
   async registerValidator(address: string, stake: number, biometricDevice: string) {
     if (stake < 10000) {
@@ -36,8 +82,8 @@ export class ProofOfEmotion {
 
     await storage.createNetworkActivity({
       type: "validator_registration",
-      message: `Validator ${address} registered with ${stake.toLocaleString()} EMOTION stake`,
-      metadata: { address, stake, biometricDevice }
+      message: `Validator ${address} registered with ${stake.toLocaleString()} EMOTION stake (ML: ${this.mlEngineEnabled ? 'enabled' : 'disabled'})`,
+      metadata: { address, stake, biometricDevice, mlEnabled: this.mlEngineEnabled }
     });
 
     return validator;
@@ -49,38 +95,181 @@ export class ProofOfEmotion {
       throw new Error("Validator not registered");
     }
 
-    const emotionalMetrics = this.calculateEmotionalMetrics(biometricData);
-    const authenticityScore = this.calculateAuthenticity(biometricData);
+    // Enhanced biometric data preprocessing
+    const processedBiometrics = this.preprocessBiometricData(biometricData);
     
-    if (authenticityScore < 80) {
-      throw new Error("Biometric authenticity too low for consensus participation");
+    // Calculate emotional metrics using ML if available
+    let emotionalMetrics: EmotionalMetrics;
+    
+    if (this.mlEngineEnabled) {
+      try {
+        emotionalMetrics = await this.calculateEmotionalMetricsML(processedBiometrics);
+      } catch (error) {
+        console.warn('🔄 EmotionalChain: ML calculation failed, falling back to rule-based:', error);
+        emotionalMetrics = this.calculateEmotionalMetricsRuleBased(processedBiometrics);
+      }
+    } else {
+      emotionalMetrics = this.calculateEmotionalMetricsRuleBased(processedBiometrics);
+    }
+    
+    if (emotionalMetrics.authenticity < 80) {
+      throw new Error(`Biometric authenticity too low for consensus participation (${emotionalMetrics.authenticity}%)`);
     }
 
     const proofData: InsertEmotionalProof = {
       validatorAddress,
-      heartRate: biometricData.heartRate,
-      hrv: biometricData.hrv || 0,
+      heartRate: processedBiometrics.heartRate,
+      hrv: processedBiometrics.hrv || 0,
       stressLevel: emotionalMetrics.stress,
       energyLevel: emotionalMetrics.energy,
       focusLevel: emotionalMetrics.focus,
-      authenticityScore,
-      biometricHash: this.hashBiometricData(biometricData),
+      authenticityScore: emotionalMetrics.authenticity,
+      biometricHash: this.hashBiometricData(processedBiometrics),
       signature: this.signEmotionalProof(validatorAddress, emotionalMetrics),
-      rawBiometricData: biometricData,
+      rawBiometricData: {
+        ...processedBiometrics,
+        mlProcessed: this.mlEngineEnabled,
+        emotionCategory: emotionalMetrics.emotionCategory,
+        confidence: emotionalMetrics.confidence
+      },
     };
 
     const proof = await storage.createEmotionalProof(proofData);
 
     await storage.createNetworkActivity({
       type: "emotional_proof",
-      message: `Validator ${validatorAddress} submitted emotional proof: S:${emotionalMetrics.stress}% E:${emotionalMetrics.energy}% F:${emotionalMetrics.focus}%`,
-      metadata: { validatorAddress, metrics: emotionalMetrics, authenticityScore }
+      message: `Validator ${validatorAddress} submitted ${this.mlEngineEnabled ? 'AI-enhanced' : 'rule-based'} emotional proof: S:${emotionalMetrics.stress}% E:${emotionalMetrics.energy}% F:${emotionalMetrics.focus}% (${emotionalMetrics.emotionCategory})`,
+      metadata: { 
+        validatorAddress, 
+        metrics: emotionalMetrics, 
+        mlUsed: this.mlEngineEnabled,
+        authenticityScore: emotionalMetrics.authenticity 
+      }
     });
 
     return proof;
   }
 
-  calculateEmotionalMetrics(biometricData: BiometricData): EmotionalMetrics {
+  private preprocessBiometricData(data: BiometricData): BiometricData {
+    // Enhanced preprocessing with validation and normalization
+    const processed: BiometricData = {
+      heartRate: this.validateHeartRate(data.heartRate),
+      hrv: this.validateHRV(data.hrv || 0),
+      skinConductance: this.validateSkinConductance(data.skinConductance || 0.5),
+      movement: this.validateMovement(data.movement || 0.1),
+      timestamp: data.timestamp || Date.now(),
+      respiratoryRate: data.respiratoryRate || this.estimateRespiratoryRate(data.heartRate),
+      temperature: data.temperature || this.estimateTemperature(data.heartRate),
+      accelerationX: data.accelerationX || 0,
+      accelerationY: data.accelerationY || 0,
+      accelerationZ: data.accelerationZ || 9.8,
+      ambientLight: data.ambientLight || 0.5
+    };
+
+    return processed;
+  }
+
+  private validateHeartRate(hr: number): number {
+    return Math.max(40, Math.min(200, hr || 70));
+  }
+
+  private validateHRV(hrv: number): number {
+    return Math.max(5, Math.min(100, hrv));
+  }
+
+  private validateSkinConductance(gsr: number): number {
+    return Math.max(0, Math.min(1, gsr));
+  }
+
+  private validateMovement(movement: number): number {
+    return Math.max(0, Math.min(1, movement));
+  }
+
+  private estimateRespiratoryRate(heartRate: number): number {
+    const baseRR = 14;
+    const hrEffect = (heartRate - 70) * 0.08;
+    return Math.max(8, Math.min(25, baseRR + hrEffect));
+  }
+
+  private estimateTemperature(heartRate: number): number {
+    const baseTemp = 36.5;
+    const hrEffect = (heartRate - 70) * 0.01;
+    return Math.max(35.5, Math.min(38.5, baseTemp + hrEffect));
+  }
+
+  private async calculateEmotionalMetricsML(biometricData: BiometricData): Promise<EmotionalMetrics> {
+    return new Promise((resolve, reject) => {
+      // Prepare data for Python ML engine
+      const mlInput = {
+        heart_rate: biometricData.heartRate,
+        hrv: biometricData.hrv,
+        skin_conductance: biometricData.skinConductance,
+        movement: biometricData.movement,
+        respiratory_rate: biometricData.respiratoryRate,
+        temperature: biometricData.temperature,
+        acceleration_x: biometricData.accelerationX,
+        acceleration_y: biometricData.accelerationY,
+        acceleration_z: biometricData.accelerationZ,
+        ambient_light: biometricData.ambientLight
+      };
+
+      // Spawn Python process for ML inference
+      const pythonPath = path.join(process.cwd(), 'ml-engine', 'inference.py');
+      const pythonProcess = spawn('python', [pythonPath], {
+        stdio: ['pipe', 'pipe', 'pipe']
+      });
+
+      let output = '';
+      let errorOutput = '';
+
+      pythonProcess.stdout.on('data', (data) => {
+        output += data.toString();
+      });
+
+      pythonProcess.stderr.on('data', (data) => {
+        errorOutput += data.toString();
+      });
+
+      pythonProcess.on('close', (code) => {
+        if (code === 0) {
+          try {
+            const mlResponse: MLResponse = JSON.parse(output.trim());
+            
+            if (mlResponse.error) {
+              reject(new Error(`ML inference error: ${mlResponse.error}`));
+              return;
+            }
+            
+            resolve({
+              stress: Math.round(mlResponse.stress),
+              energy: Math.round(mlResponse.energy),
+              focus: Math.round(mlResponse.focus),
+              authenticity: Math.round(mlResponse.authenticity),
+              confidence: mlResponse.confidence,
+              emotionCategory: mlResponse.emotion_category,
+              mlPrediction: mlResponse.ml_prediction
+            });
+          } catch (parseError) {
+            reject(new Error(`Failed to parse ML response: ${parseError}`));
+          }
+        } else {
+          reject(new Error(`ML process failed with code ${code}: ${errorOutput}`));
+        }
+      });
+
+      // Send input data to Python process
+      pythonProcess.stdin.write(JSON.stringify(mlInput));
+      pythonProcess.stdin.end();
+
+      // Timeout after 5 seconds
+      setTimeout(() => {
+        pythonProcess.kill();
+        reject(new Error('ML inference timeout'));
+      }, 5000);
+    });
+  }
+
+  calculateEmotionalMetricsRuleBased(biometricData: BiometricData): EmotionalMetrics {
     const { heartRate, hrv = 0, skinConductance = 0, movement = 0 } = biometricData;
     
     let stress = 0;
@@ -102,24 +291,51 @@ export class ProofOfEmotion {
     if (movement < 0.2) focus += 10;
     focus = Math.max(0, Math.min(focus, 100));
 
-    return { stress, energy, focus };
+    const authenticity = this.calculateAuthenticity(biometricData);
+
+    // Determine emotion category based on rule-based logic
+    let emotionCategory = 'neutral';
+    if (stress > 70) emotionCategory = 'stressed';
+    else if (stress < 20 && energy < 40) emotionCategory = 'calm';
+    else if (focus > 80 && stress < 40) emotionCategory = 'focused';
+    else if (energy > 80) emotionCategory = 'excited';
+
+    return {
+      stress,
+      energy,
+      focus,
+      authenticity,
+      confidence: 0.85, // Fixed confidence for rule-based
+      emotionCategory
+    };
   }
 
   calculateAuthenticity(biometricData: BiometricData): number {
     let authenticity = 100;
     
-    // Check for obvious patterns that might indicate spoofing
-    if (biometricData.heartRate % 5 === 0) authenticity -= 10;
+    // Enhanced authenticity checks
+    const { heartRate, hrv = 0, skinConductance = 0, movement = 0 } = biometricData;
     
-    if (biometricData.heartRate < 40 || biometricData.heartRate > 200) {
-      authenticity -= 30;
-    }
+    // Check for obvious spoofing patterns
+    if (heartRate % 5 === 0 && heartRate % 10 === 0) authenticity -= 15;
     
-    const expectedConductance = (biometricData.heartRate - 60) / 100;
-    const conductanceDiff = Math.abs((biometricData.skinConductance || 0) - expectedConductance);
-    if (conductanceDiff > 0.3) authenticity -= 15;
-
-    return Math.max(authenticity, 0);
+    // Physiological bounds checking
+    if (heartRate < 40 || heartRate > 200) authenticity -= 40;
+    if (hrv < 5 || hrv > 100) authenticity -= 20;
+    
+    // Correlation consistency
+    const expectedConductance = (heartRate - 60) / 100;
+    const conductanceDiff = Math.abs(skinConductance - expectedConductance);
+    if (conductanceDiff > 0.4) authenticity -= 20;
+    
+    // Movement vs heart rate consistency
+    if (heartRate > 120 && movement < 0.05) authenticity -= 25;
+    if (heartRate < 60 && movement > 0.8) authenticity -= 20;
+    
+    // HRV vs heart rate biological relationship
+    if (heartRate > 100 && hrv > 60) authenticity -= 30; // Unlikely combination
+    
+    return Math.max(0, authenticity);
   }
 
   async calculatePoEConsensus(blockHeight: number) {
@@ -129,11 +345,15 @@ export class ProofOfEmotion {
       throw new Error(`Insufficient validators for consensus. Need ${this.minValidators}, got ${validProofs.length}`);
     }
 
-    // Get validator stakes for weighted consensus
+    // Enhanced consensus calculation with ML-aware processing
     const proofsWithStakes = await Promise.all(
       validProofs.map(async (proof) => {
         const validator = await storage.getValidator(proof.validatorAddress);
-        return { ...proof, stake: validator?.stake || 0 };
+        return { 
+          ...proof, 
+          stake: validator?.stake || 0,
+          mlProcessed: proof.rawBiometricData?.mlProcessed || false
+        };
       })
     );
 
@@ -154,6 +374,9 @@ export class ProofOfEmotion {
 
     const agreementScore = this.calculateEmotionalAgreement(proofsWithStakes);
     
+    // Enhanced consensus metadata
+    const mlProcessedCount = proofsWithStakes.filter(p => p.mlProcessed).length;
+    
     const consensusData: InsertConsensusBlock = {
       blockHeight,
       networkStress: Math.round(weightedStress),
@@ -170,7 +393,9 @@ export class ProofOfEmotion {
         energy: p.energyLevel,
         focus: p.focusLevel,
         authenticity: p.authenticityScore,
-        stake: p.stake
+        stake: p.stake,
+        mlProcessed: p.mlProcessed,
+        emotionCategory: p.rawBiometricData?.emotionCategory || 'unknown'
       }))
     };
 
@@ -178,8 +403,14 @@ export class ProofOfEmotion {
 
     await storage.createNetworkActivity({
       type: "consensus",
-      message: `Block ${blockHeight} consensus ${consensus.consensusReached ? 'REACHED' : 'FAILED'} (${consensus.agreementScore}% agreement)`,
-      metadata: { blockHeight, consensus }
+      message: `Block ${blockHeight} ${this.mlEngineEnabled ? 'AI-enhanced' : 'rule-based'} consensus ${consensus.consensusReached ? 'REACHED' : 'FAILED'} (${consensus.agreementScore}% agreement, ${mlProcessedCount}/${validProofs.length} ML-processed)`,
+      metadata: { 
+        blockHeight, 
+        consensus, 
+        mlEnabled: this.mlEngineEnabled,
+        mlProcessedValidators: mlProcessedCount,
+        totalValidators: validProofs.length
+      }
     });
 
     return consensus;
@@ -215,7 +446,8 @@ export class ProofOfEmotion {
     const dataString = JSON.stringify({
       heartRate: data.heartRate,
       hrv: data.hrv,
-      timestamp: data.timestamp
+      timestamp: data.timestamp,
+      mlProcessed: this.mlEngineEnabled
     });
     
     let hash = 0;
@@ -228,7 +460,45 @@ export class ProofOfEmotion {
   }
 
   private signEmotionalProof(validator: string, metrics: EmotionalMetrics): string {
-    return `poe_${validator}_${metrics.stress}_${metrics.energy}_${metrics.focus}_${Date.now()}`;
+    return `poe_v2_${validator}_${metrics.stress}_${metrics.energy}_${metrics.focus}_${Date.now()}_${this.mlEngineEnabled ? 'ml' : 'rule'}`;
+  }
+
+  // Public method to check ML engine status
+  public isMLEngineEnabled(): boolean {
+    return this.mlEngineEnabled;
+  }
+
+  // Public method to get ML engine statistics
+  public getMLEngineStats(): any {
+    return {
+      enabled: this.mlEngineEnabled,
+      version: this.version,
+      modelPath: this.mlModelPath,
+      consensusThreshold: this.consensusThreshold,
+      features: [
+        'Advanced emotion classification',
+        'AI-powered authenticity detection',
+        'Multi-model ensemble predictions',
+        'Real-time biometric processing',
+        'Enhanced anti-spoofing'
+      ]
+    };
+  }
+
+  // Public method for testing ML functionality
+  public async testMLClassification(biometricData: BiometricData): Promise<EmotionalMetrics> {
+    const processedBiometrics = this.preprocessBiometricData(biometricData);
+    
+    if (this.mlEngineEnabled) {
+      try {
+        return await this.calculateEmotionalMetricsML(processedBiometrics);
+      } catch (error) {
+        console.warn('ML test failed, using rule-based fallback:', error);
+        return this.calculateEmotionalMetricsRuleBased(processedBiometrics);
+      }
+    } else {
+      return this.calculateEmotionalMetricsRuleBased(processedBiometrics);
+    }
   }
 }
 

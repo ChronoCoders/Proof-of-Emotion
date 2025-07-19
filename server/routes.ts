@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { poeAlgorithm } from "./services/poe-algorithm";
 import { fitbitService } from "./services/fitbit-service";
 import { websocketService } from "./services/websocket-service";
-import { insertValidatorSchema } from "@shared/schema";
+import { insertValidatorSchema } from "../shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -412,6 +412,118 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.setHeader('Content-Disposition', `attachment; filename="network_analytics_${new Date().toISOString().split('T')[0]}.json"`);
         res.json(analyticsData);
       }
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // ML Engine Status and Testing Routes
+  app.get('/api/ml/status', async (req, res) => {
+    try {
+      const mlStats = poeAlgorithm.getMLEngineStats();
+      res.json({
+        status: 'success',
+        ml_engine: mlStats,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/api/ml/test-emotion', async (req, res) => {
+    try {
+      const { biometricData } = req.body;
+      
+      if (!biometricData) {
+        return res.status(400).json({ message: 'Biometric data required' });
+      }
+
+      // Test emotion classification without creating proof
+      const testData = {
+        heartRate: biometricData.heartRate || 70,
+        hrv: biometricData.hrv || 30,
+        skinConductance: biometricData.skinConductance || 0.5,
+        movement: biometricData.movement || 0.1,
+        timestamp: Date.now()
+      };
+
+      // Use the new ML test method (will try ML first, fallback to rule-based)
+      const metrics = await poeAlgorithm.testMLClassification(testData);
+      
+      res.json({
+        status: 'success',
+        input_data: testData,
+        emotional_metrics: metrics,
+        ml_engine_enabled: poeAlgorithm.isMLEngineEnabled(),
+        processing_method: poeAlgorithm.isMLEngineEnabled() ? 'ML' : 'Rule-based',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  app.post('/api/ml/train', async (req, res) => {
+    try {
+      res.json({
+        status: 'info',
+        message: 'ML training should be done offline using Python scripts',
+        training_script: 'ml-engine/train_models.py',
+        data_generator: 'ml-engine/training_data/generate_data.py',
+        instructions: [
+          '1. cd ml-engine',
+          '2. python training_data/generate_data.py',
+          '3. python train_models.py',
+          '4. Restart EmotionalChain server'
+        ]
+      });
+    } catch (error: any) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
+  // Enhanced ML Testing Route - Live Demo
+  app.post('/api/ml/demo', async (req, res) => {
+    try {
+      const demoScenarios = [
+        {
+          name: 'Calm State',
+          data: { heartRate: 65, hrv: 50, skinConductance: 0.2, movement: 0.05 }
+        },
+        {
+          name: 'Stressed State', 
+          data: { heartRate: 120, hrv: 15, skinConductance: 0.9, movement: 0.4 }
+        },
+        {
+          name: 'Focused State',
+          data: { heartRate: 78, hrv: 45, skinConductance: 0.35, movement: 0.03 }
+        },
+        {
+          name: 'Excited State',
+          data: { heartRate: 95, hrv: 30, skinConductance: 0.65, movement: 0.5 }
+        }
+      ];
+
+      const results = [];
+      
+      for (const scenario of demoScenarios) {
+        const testData = { ...scenario.data, timestamp: Date.now() };
+        const metrics = await poeAlgorithm.testMLClassification(testData);
+        
+        results.push({
+          scenario: scenario.name,
+          input: testData,
+          output: metrics
+        });
+      }
+
+      res.json({
+        status: 'success',
+        demo_results: results,
+        ml_engine_enabled: poeAlgorithm.isMLEngineEnabled(),
+        timestamp: new Date().toISOString()
+      });
     } catch (error: any) {
       res.status(500).json({ message: error.message });
     }

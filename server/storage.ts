@@ -11,7 +11,7 @@ import {
   type InsertConsensusBlock,
   type NetworkActivity,
   type InsertNetworkActivity
-} from "@shared/schema";
+} from "../shared/schema";
 import { db } from "./db";
 import { eq, desc, and, gte } from "drizzle-orm";
 
@@ -329,4 +329,5 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+// Use MemStorage for now since we're using SQLite in-memory
+export const storage = new MemStorage();

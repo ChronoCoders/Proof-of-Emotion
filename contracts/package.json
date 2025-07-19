@@ -1,0 +1,82 @@
+{
+  "name": "emotionalchain-smart-contracts",
+  "version": "1.0.0",
+  "description": "Smart contracts for EmotionalChain Proof of Emotion consensus mechanism",
+  "main": "index.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:localhost": "hardhat run scripts/deploy.js --network localhost",
+    "deploy:sepolia": "hardhat run scripts/deploy.js --network sepolia",
+    "deploy:mumbai": "hardhat run scripts/deploy.js --network mumbai",
+    "deploy:arbitrum": "hardhat run scripts/deploy.js --network arbitrumSepolia",
+    "deploy:optimism": "hardhat run scripts/deploy.js --network optimismSepolia",
+    "deploy:base": "hardhat run scripts/deploy.js --network baseSepolia",
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "verify:mumbai": "hardhat verify --network mumbai",
+    "node": "hardhat node",
+    "console": "hardhat console",
+    "clean": "hardhat clean",
+    "size": "hardhat size-contracts",
+    "gas": "REPORT_GAS=true hardhat test",
+    "coverage": "hardhat coverage",
+    "lint": "solhint 'contracts/**/*.sol'",
+    "lint:fix": "solhint 'contracts/**/*.sol' --fix",
+    "format": "prettier --write 'contracts/**/*.sol'",
+    "analyze": "slither contracts/",
+    "flatten": "hardhat flatten contracts/ProofOfEmotionCore.sol > flattened/ProofOfEmotionCore_flattened.sol"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "smart-contracts",
+    "solidity",
+    "consensus",
+    "proof-of-emotion",
+    "biometric",
+    "AI",
+    "machine-learning",
+    "emotional-intelligence"
+  ],
+  "author": "EmotionalChain Technologies",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.2",
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@nomiclabs/hardhat-waffle": "^2.0.6",
+    "@typechain/ethers-v5": "^10.2.1",
+    "@typechain/hardhat": "^6.1.6",
+    "@types/chai": "^4.3.5",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.4.2",
+    "chai": "^4.3.7",
+    "ethereum-waffle": "^4.0.10",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.17.0",
+    "hardhat-gas-reporter": "^1.0.9",
+    "prettier": "^2.8.8",
+    "prettier-plugin-solidity": "^1.1.3",
+    "solhint": "^3.6.2",
+    "solidity-coverage": "^0.8.4",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.2.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.2",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EmotionalChain/smart-contracts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/EmotionalChain/smart-contracts/issues"
+  },
+  "homepage": "https://emotionalchain.org"
+}

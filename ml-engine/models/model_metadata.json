@@ -1,0 +1,89 @@
+{
+  "model_info": {
+    "version": "2.0.0",
+    "training_date": "2025-07-17T21:18:01.432197",
+    "total_samples": 4800,
+    "emotion_categories": [
+      "focused",
+      "fatigued",
+      "calm",
+      "stressed",
+      "anxious",
+      "excited"
+    ],
+    "features": [
+      "heart_rate",
+      "hrv",
+      "skin_conductance",
+      "movement",
+      "respiratory_rate",
+      "temperature",
+      "acceleration_x",
+      "acceleration_y",
+      "acceleration_z",
+      "ambient_light"
+    ],
+    "model_types": [
+      "random_forest",
+      "gradient_boost",
+      "neural_network"
+    ]
+  },
+  "performance": {
+    "random_forest": {
+      "train_accuracy": 0.925,
+      "test_accuracy": 0.85625,
+      "cv_mean": 0.8341145833333332,
+      "cv_std": 0.009660019266141347
+    },
+    "gradient_boost": {
+      "train_accuracy": 1.0,
+      "test_accuracy": 0.8614583333333333,
+      "cv_mean": 0.83984375,
+      "cv_std": 0.010219487953306544
+    },
+    "neural_network": {
+      "train_accuracy": 0.9791666666666666,
+      "test_accuracy": 0.784375,
+      "cv_mean": 0.7554687499999999,
+      "cv_std": 0.005298695299316617
+    }
+  },
+  "test_results": {
+    "sample_input": {
+      "heart_rate": 85,
+      "hrv": 25,
+      "skin_conductance": 0.6,
+      "movement": 0.3,
+      "respiratory_rate": 18,
+      "temperature": 36.8,
+      "acceleration_x": 0.1,
+      "acceleration_y": -0.1,
+      "acceleration_z": 9.9,
+      "ambient_light": 0.7
+    },
+    "emotional_metrics": {
+      "stress": 20,
+      "energy": 70,
+      "focus": 95,
+      "authenticity": 81,
+      "confidence": 0.8656247059113253,
+      "emotion_category": "focused",
+      "ml_prediction": 2
+    },
+    "consensus_readiness": {
+      "consensus_ready": true,
+      "readiness_score": 100,
+      "emotional_metrics": {
+        "stress": 20,
+        "energy": 70,
+        "focus": 95,
+        "authenticity": 90,
+        "confidence": 0.8656247059113253,
+        "emotion_category": "focused",
+        "ml_prediction": 2
+      },
+      "recommendation": "Excellent consensus readiness. Participate immediately."
+    }
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "generation_timestamp": "2025-07-16T19:04:12.206395",
+  "emotion_profiles": {
+    "calm": {
+      "label": 0,
+      "heart_rate": {
+        "mean": 70,
+        "std": 8,
+        "min": 55,
+        "max": 85
+      },
+      "hrv": {
+        "mean": 45,
+        "std": 10,
+        "min": 30,
+        "max": 65
+      },
+      "skin_conductance": {
+        "mean": 0.3,
+        "std": 0.08,
+        "min": 0.15,
+        "max": 0.5
+      },
+      "movement": {
+        "mean": 0.1,
+        "std": 0.05,
+        "min": 0,
+        "max": 0.25
+      },
+      "respiratory_rate": {
+        "mean": 14,
+        "std": 2,
+        "min": 10,
+        "max": 18
+      },
+      "description": "Relaxed, peaceful state with low arousal"
+    },
+    "focused": {
+      "label": 1,
+      "heart_rate": {
+        "mean": 75,
+        "std": 6,
+        "min": 65,
+        "max": 90
+      },
+      "hrv": {
+        "mean": 50,
+        "std": 8,
+        "min": 35,
+        "max": 70
+      },
+      "skin_conductance": {
+        "mean": 0.4,
+        "std": 0.06,
+        "min": 0.25,
+        "max": 0.55
+      },
+      "movement": {
+        "mean": 0.05,
+        "std": 0.02,
+        "min": 0,
+        "max": 0.15
+      },
+      "respiratory_rate": {
+        "mean": 15,
+        "std": 1.5,
+        "min": 12,
+        "max": 18
+      },
+      "description": "Concentrated attention with controlled arousal"
+    },
+    "excited": {
+      "label": 2,
+      "heart_rate": {
+        "mean": 88,
+        "std": 10,
+        "min": 75,
+        "max": 110
+      },
+      "hrv": {
+        "mean": 35,
+        "std": 8,
+        "min": 20,
+        "max": 50
+      },
+      "skin_conductance": {
+        "mean": 0.6,
+        "std": 0.12,
+        "min": 0.4,
+        "max": 0.8
+      },
+      "movement": {
+        "mean": 0.4,
+        "std": 0.15,
+        "min": 0.1,
+        "max": 0.7
+      },
+      "respiratory_rate": {
+        "mean": 18,
+        "std": 3,
+        "min": 14,
+        "max": 24
+      },
+      "description": "High positive arousal and energy"
+    },
+    "stressed": {
+      "label": 3,
+      "heart_rate": {
+        "mean": 95,
+        "std": 12,
+        "min": 80,
+        "max": 120
+      },
+      "hrv": {
+        "mean": 20,
+        "std": 5,
+        "min": 10,
+        "max": 35
+      },
+      "skin_conductance": {
+        "mean": 0.7,
+        "std": 0.15,
+        "min": 0.5,
+        "max": 0.9
+      },
+      "movement": {
+        "mean": 0.3,
+        "std": 0.1,
+        "min": 0.1,
+        "max": 0.6
+      },
+      "respiratory_rate": {
+        "mean": 20,
+        "std": 4,
+        "min": 16,
+        "max": 28
+      },
+      "description": "High negative arousal with physiological activation"
+    },
+    "anxious": {
+      "label": 4,
+      "heart_rate": {
+        "mean": 100,
+        "std": 15,
+        "min": 85,
+        "max": 130
+      },
+      "hrv": {
+        "mean": 18,
+        "std": 4,
+        "min": 10,
+        "max": 30
+      },
+      "skin_conductance": {
+        "mean": 0.8,
+        "std": 0.1,
+        "min": 0.6,
+        "max": 0.95
+      },
+      "movement": {
+        "mean": 0.35,
+        "std": 0.12,
+        "min": 0.15,
+        "max": 0.65
+      },
+      "respiratory_rate": {
+        "mean": 22,
+        "std": 5,
+        "min": 18,
+        "max": 32
+      },
+      "description": "Worry and apprehension with elevated arousal"
+    },
+    "fatigued": {
+      "label": 5,
+      "heart_rate": {
+        "mean": 65,
+        "std": 5,
+        "min": 55,
+        "max": 80
+      },
+      "hrv": {
+        "mean": 25,
+        "std": 6,
+        "min": 15,
+        "max": 40
+      },
+      "skin_conductance": {
+        "mean": 0.25,
+        "std": 0.06,
+        "min": 0.15,
+        "max": 0.4
+      },
+      "movement": {
+        "mean": 0.15,
+        "std": 0.08,
+        "min": 0.05,
+        "max": 0.35
+      },
+      "respiratory_rate": {
+        "mean": 12,
+        "std": 2,
+        "min": 8,
+        "max": 16
+      },
+      "description": "Low energy and reduced physiological activation"
+    }
+  },
+  "datasets": {
+    "static": 3000,
+    "temporal": 3000,
+    "edge_cases": 500,
+    "validation": 198
+  },
+  "total_samples": 6698,
+  "features": [
+    "emotion",
+    "emotion_label",
+    "heart_rate",
+    "hrv",
+    "skin_conductance",
+    "movement",
+    "respiratory_rate",
+    "temperature",
+    "acceleration_x",
+    "acceleration_y",
+    "acceleration_z",
+    "ambient_light",
+    "blood_oxygen",
+    "timestamp",
+    "individual_id"
+  ]
+}

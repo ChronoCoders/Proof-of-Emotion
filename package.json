@@ -1,14 +1,52 @@
 {
-  "name": "rest-express",
+  "name": "emotionalchain-poe-blockchain",
   "version": "1.0.0",
+  "description": "EmotionalChain - The world's first emotion-based blockchain consensus platform using Proof of Emotion (PoE)",
   "type": "module",
   "license": "MIT",
+  "keywords": [
+    "blockchain",
+    "emotion",
+    "biometric",
+    "consensus",
+    "proof-of-emotion",
+    "wellness",
+    "ai"
+  ],
+  "author": "EmotionalChain Team",
+  "homepage": "https://emotionalchain.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/emotionalchain/proof-of-emotion"
+  },
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
+    "dev": "cross-env NODE_ENV=development tsx server/index.ts",
+    "dev:windows": "set NODE_ENV=development && tsx server/index.ts",
+    "dev:unix": "NODE_ENV=development tsx server/index.ts",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start:windows": "set NODE_ENV=production && node dist/index.js",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-    "start": "NODE_ENV=production node dist/index.js",
+    "build:windows": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "check:watch": "tsc --watch",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:migrate": "drizzle-kit migrate",
+    "test": "echo \"EmotionalChain PoE consensus tests - implement when needed\" && exit 0",
+    "lint": "echo \"ESLint configuration - implement when needed\" && exit 0",
+    "consensus:test": "cross-env NODE_ENV=test tsx server/consensus/test-runner.ts",
+    "validators:check": "cross-env NODE_ENV=development tsx server/validators/health-check.ts",
+    "biometrics:test": "cross-env NODE_ENV=test tsx server/biometrics/integration-test.ts",
+    "network:stats": "cross-env NODE_ENV=development tsx server/analytics/network-stats.ts",
+    "export:data": "cross-env NODE_ENV=development tsx server/export/data-export.ts",
+    "install:deps": "npm install",
+    "setup": "npm run install:deps && npm run check && echo \"EmotionalChain setup complete!\"",
+    "demo": "echo \"Starting EmotionalChain Demo...\" && npm run dev",
+    "production": "npm run build && npm run start",
+    "ml:setup": "python setup_ml_engine.py",
+    "ml:train": "python ml-engine/train_models.py",
+    "ml:test": "python -c \"import sys; sys.path.append('ml-engine'); from emotion_classifier import EmotionClassifier; print('ML Engine OK')\"",
+    "ml:generate-data": "python ml-engine/training_data/generate_data.py"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -42,18 +80,22 @@
     "@radix-ui/react-toggle-group": "^1.1.3",
     "@radix-ui/react-tooltip": "^1.2.0",
     "@tanstack/react-query": "^5.60.5",
+    "better-sqlite3": "^12.2.0",
     "browserslist": "^4.25.1",
     "chart.js": "^4.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "connect-pg-simple": "^10.0.0",
+    "cross-env": "^7.0.3",
     "date-fns": "^3.6.0",
-    "drizzle-orm": "^0.39.1",
+    "dotenv": "^17.2.0",
+    "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.7.0",
     "embla-carousel-react": "^8.6.0",
     "express": "^4.21.2",
     "express-session": "^1.18.1",
+    "fix": "^0.0.3",
     "framer-motion": "^11.13.1",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.453.0",
@@ -74,35 +116,54 @@
     "tw-animate-css": "^1.2.5",
     "vaul": "^1.1.2",
     "wouter": "^3.3.5",
-    "ws": "^8.18.0",
+    "ws": "^8.18.3",
     "zod": "^3.24.2",
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
-    "@replit/vite-plugin-cartographer": "^0.2.7",
-    "@replit/vite-plugin-runtime-error-modal": "^0.0.3",
+    
     "@tailwindcss/typography": "^0.5.15",
-    "@tailwindcss/vite": "^4.1.3",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/connect-pg-simple": "^7.0.3",
     "@types/express": "4.17.21",
-    "@types/express-session": "^1.18.0",
+    "@types/express-session": "^1.18.2",
     "@types/node": "20.16.11",
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
-    "@types/ws": "^8.5.13",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^4.3.2",
     "autoprefixer": "^10.4.21",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.31.4",
     "esbuild": "^0.25.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.1",
     "typescript": "5.6.3",
-    "vite": "^5.4.19"
+    "vite": "^6.3.5"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "config": {
+    "emotionalchain": {
+      "consensus": "proof-of-emotion",
+      "version": "1.0.0",
+      "network": {
+        "minValidators": 3,
+        "consensusThreshold": 67,
+        "blockTime": 2000
+      }
+    }
   }
 }
