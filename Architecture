@@ -1,0 +1,12 @@
+EmotionalChain Production Stack:
+┌─────────────────────────────────────┐
+│ Frontend (TypeScript/React)         │
+├─────────────────────────────────────┤
+│ API Gateway (TypeScript/Node.js)    │
+├─────────────────────────────────────┤
+│ Core Blockchain (Rust/Substrate)    │ ← MAIN ENGINE
+├─────────────────────────────────────┤
+│ ML Engine (Python/TensorFlow)       │
+├─────────────────────────────────────┤
+│ Biometric Drivers (C++/Rust)        │
+└─────────────────────────────────────┘
