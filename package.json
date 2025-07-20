@@ -60,7 +60,12 @@
     "blockchain:clean": "rm -rf dist/blockchain",
     "custom-chain:start": "npm run blockchain:dev",
     "custom-chain:wallet": "npm run blockchain:wallet",
-    "custom-chain:build": "npm run blockchain:build && npm run blockchain:start"
+    "custom-chain:build": "npm run blockchain:build && npm run blockchain:start",
+    "bootstrap": "cross-env NODE_ENV=development tsx emotional-chain/src/network/bootstrap-node.ts",
+    "bootstrap:windows": "set NODE_ENV=development && tsx emotional-chain/src/network/bootstrap-node.ts",
+    "bootstrap:unix": "NODE_ENV=development tsx emotional-chain/src/network/bootstrap-node.ts",
+    "bootstrap:prod": "cross-env NODE_ENV=production tsx emotional-chain/src/network/bootstrap-node.ts",
+    "network:bootstrap": "npm run bootstrap"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -101,7 +106,9 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "crypto": "^1.0.1",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.0",
     "drizzle-orm": "^0.39.3",
@@ -111,9 +118,11 @@
     "express-session": "^1.18.1",
     "fix": "^0.0.3",
     "framer-motion": "^11.13.1",
+    "helmet": "^7.1.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.453.0",
     "memorystore": "^1.6.7",
+    "morgan": "^1.10.0",
     "nanoid": "^5.1.5",
     "next-themes": "^0.4.6",
     "passport": "^0.7.0",
@@ -124,6 +133,7 @@
     "react-hook-form": "^7.55.0",
     "react-icons": "^5.4.0",
     "react-resizable-panels": "^2.1.7",
+    "readline": "^1.3.0",
     "recharts": "^2.15.2",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
@@ -132,19 +142,16 @@
     "wouter": "^3.3.5",
     "ws": "^8.18.3",
     "zod": "^3.24.2",
-    "zod-validation-error": "^3.4.0",
-    "cors": "^2.8.5",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0",
-    "readline": "^1.3.0",
-    "crypto": "^1.0.1"
+    "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",
     "@types/better-sqlite3": "^7.6.13",
     "@types/connect-pg-simple": "^7.0.3",
+    "@types/cors": "^2.8.16",
     "@types/express": "4.17.21",
     "@types/express-session": "^1.18.2",
+    "@types/jest": "^29.5.8",
     "@types/node": "20.16.11",
     "@types/passport": "^1.0.16",
     "@types/passport-local": "^1.0.38",
@@ -155,14 +162,12 @@
     "autoprefixer": "^10.4.21",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.25.0",
+    "jest": "^29.7.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.19.1",
     "typescript": "5.6.3",
-    "vite": "^6.3.5",
-    "jest": "^29.7.0",
-    "@types/jest": "^29.5.8",
-    "@types/cors": "^2.8.16"
+    "vite": "^6.3.5"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
@@ -185,7 +190,9 @@
         "consensusThreshold": 67,
         "blockTime": 2000,
         "defaultPort": 8001,
-        "bootstrapNodes": ["localhost:8000"],
+        "bootstrapNodes": [
+          "localhost:8000"
+        ],
         "maxPeers": 50
       },
       "blockchain": {
@@ -198,21 +205,30 @@
       "validator": {
         "minStake": 1000,
         "emotionalConsistencyThreshold": 0.75,
-        "uptimeThreshold": 0.90,
+        "uptimeThreshold": 0.9,
         "biometricAuthenticityThreshold": 0.75
       },
       "biometric": {
         "dataEncryption": true,
         "enableTestBiometrics": true,
         "mockBiometricDevices": true,
-        "sensors": ["heartRate", "facial", "voice", "skin", "eyeTracking"]
+        "sensors": [
+          "heartRate",
+          "facial",
+          "voice",
+          "skin",
+          "eyeTracking"
+        ]
       }
     }
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node",
-    "roots": ["<rootDir>/emotional-chain", "<rootDir>/tests"],
+    "roots": [
+      "<rootDir>/emotional-chain",
+      "<rootDir>/tests"
+    ],
     "testMatch": [
       "**/__tests__/**/*.+(ts|tsx|js)",
       "**/*.(test|spec).+(ts|tsx|js)"

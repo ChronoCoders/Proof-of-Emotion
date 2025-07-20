@@ -38,7 +38,7 @@
     "machine-learning",
     "emotional-intelligence"
   ],
-  "author": "EmotionalChain Technologies",
+  "author": "Altug Tatlisu",
   "license": "MIT",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^3.0.2",
@@ -78,5 +78,5 @@
   "bugs": {
     "url": "https://github.com/EmotionalChain/smart-contracts/issues"
   },
-  "homepage": "https://emotionalchain.org"
+  "homepage": "https://emotionalchain.com"
 }
