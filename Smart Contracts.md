@@ -1,4 +1,4 @@
-# Detailed Smart Contract Summary - Enhanced EmotionalChain
+# EmotionalChain
 
 ## Contract 1: EnhancedBiometricValidator.sol
 
