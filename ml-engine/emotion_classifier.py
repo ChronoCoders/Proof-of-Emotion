@@ -20,22 +20,9 @@ warnings.filterwarnings('ignore')
 class EmotionClassifier:
     """
     Advanced emotion classifier for EmotionalChain PoE consensus
-    
-    Features:
-    - Multi-modal biometric analysis
-    - Real-time emotion prediction
-    - Authenticity scoring
-    - Consensus readiness assessment
     """
     
     def __init__(self, model_type: str = 'ensemble', verbose: bool = False):
-        """
-        Initialize emotion classifier
-        
-        Args:
-            model_type: 'random_forest', 'gradient_boost', 'neural_network', or 'ensemble'
-            verbose: Whether to print debug messages
-        """
         self.model_type = model_type
         self.verbose = verbose
         self.models = {}
@@ -47,7 +34,6 @@ class EmotionClassifier:
             'acceleration_y', 'acceleration_z', 'ambient_light'
         ]
         
-        # Emotion categories for classification
         self.emotion_categories = {
             0: 'calm',
             1: 'stressed', 
@@ -57,12 +43,9 @@ class EmotionClassifier:
             5: 'anxious'
         }
         
-        # Initialize models
         self._initialize_models()
     
     def _initialize_models(self):
-        """Initialize ML models based on type"""
-        
         if self.model_type == 'random_forest' or self.model_type == 'ensemble':
             self.models['random_forest'] = RandomForestClassifier(
                 n_estimators=100,
@@ -93,7 +76,6 @@ class EmotionClassifier:
                 random_state=42
             )
         
-        # Initialize scalers for each model
         for model_name in self.models.keys():
             if model_name == 'neural_network':
                 self.scalers[model_name] = StandardScaler()
@@ -101,24 +83,12 @@ class EmotionClassifier:
                 self.scalers[model_name] = MinMaxScaler()
     
     def preprocess_biometric_data(self, biometric_data: Dict) -> np.ndarray:
-        """
-        Preprocess raw biometric data for ML models
-        
-        Args:
-            biometric_data: Dictionary containing biometric measurements
-            
-        Returns:
-            Preprocessed feature vector
-        """
         features = []
         
-        # Extract core features with defaults
         features.append(biometric_data.get('heart_rate', 70))
         features.append(biometric_data.get('hrv', 30))
         features.append(biometric_data.get('skin_conductance', 0.5))
         features.append(biometric_data.get('movement', 0.1))
-        
-        # Extended features (simulated if not available)
         features.append(biometric_data.get('respiratory_rate', 16))
         features.append(biometric_data.get('temperature', 36.5))
         features.append(biometric_data.get('acceleration_x', 0))
@@ -129,36 +99,22 @@ class EmotionClassifier:
         return np.array(features).reshape(1, -1)
     
     def calculate_emotional_metrics(self, biometric_data: Dict) -> Dict:
-        """
-        Calculate emotional metrics using ML predictions
-        
-        Args:
-            biometric_data: Raw biometric data
-            
-        Returns:
-            Dictionary with emotional metrics and confidence scores
-        """
         if not self.is_trained:
-            # Fallback to rule-based calculation if not trained
             return self._rule_based_emotions(biometric_data)
         
         features = self.preprocess_biometric_data(biometric_data)
         predictions = {}
         confidences = {}
         
-        # Get predictions from all models
         for model_name, model in self.models.items():
-            # Scale features
             scaled_features = self.scalers[model_name].transform(features)
             
-            # Predict emotion category
             prediction = model.predict(scaled_features)[0]
             prob_distribution = model.predict_proba(scaled_features)[0]
             
             predictions[model_name] = prediction
             confidences[model_name] = np.max(prob_distribution)
         
-        # Ensemble prediction (if multiple models)
         if len(predictions) > 1:
             final_prediction = max(set(predictions.values()), 
                                  key=list(predictions.values()).count)
@@ -167,7 +123,6 @@ class EmotionClassifier:
             final_prediction = list(predictions.values())[0]
             avg_confidence = list(confidences.values())[0]
         
-        # Convert to EmotionalChain metrics
         emotion_metrics = self._convert_to_poe_metrics(
             final_prediction, avg_confidence, biometric_data
         )
@@ -175,13 +130,11 @@ class EmotionClassifier:
         return emotion_metrics
     
     def _rule_based_emotions(self, biometric_data: Dict) -> Dict:
-        """Fallback rule-based emotion calculation"""
         heart_rate = biometric_data.get('heart_rate', 70)
         hrv = biometric_data.get('hrv', 30)
         skin_conductance = biometric_data.get('skin_conductance', 0.5)
         movement = biometric_data.get('movement', 0.1)
         
-        # Stress calculation
         stress = 0
         if heart_rate > 100: stress += 30
         if heart_rate > 120: stress += 20
@@ -189,21 +142,18 @@ class EmotionClassifier:
         if skin_conductance > 0.7: stress += 25
         stress = min(stress, 100)
         
-        # Energy calculation
         energy = 50
         if 80 <= heart_rate <= 100: energy += 20
         if movement > 0.5: energy += 15
         if hrv > 40: energy += 15
         energy = min(energy, 100)
         
-        # Focus calculation
         focus = 70
         if hrv > 30 and stress < 30: focus += 20
         if stress > 70: focus -= 30
         if movement < 0.2: focus += 10
         focus = max(0, min(focus, 100))
         
-        # Authenticity (anti-spoofing)
         authenticity = 100
         if heart_rate % 5 == 0: authenticity -= 10
         if heart_rate < 40 or heart_rate > 200: authenticity -= 30
@@ -220,11 +170,9 @@ class EmotionClassifier:
     
     def _convert_to_poe_metrics(self, emotion_prediction: int, 
                                confidence: float, biometric_data: Dict) -> Dict:
-        """Convert ML prediction to PoE metrics"""
         
         emotion_name = self.emotion_categories.get(emotion_prediction, 'unknown')
         
-        # Map emotion categories to PoE metrics
         if emotion_name == 'calm':
             stress, energy, focus = 10, 60, 85
         elif emotion_name == 'stressed':
@@ -240,15 +188,13 @@ class EmotionClassifier:
         else:
             stress, energy, focus = 50, 50, 50
         
-        # Adjust based on biometric data
         heart_rate = biometric_data.get('heart_rate', 70)
         if heart_rate > 100:
             stress = min(stress + 20, 100)
             energy = min(energy + 10, 100)
         
-        # Calculate authenticity using ML confidence
         authenticity = min(confidence * 100 + np.random.normal(0, 5), 100)
-        authenticity = max(authenticity, 80)  # Minimum threshold
+        authenticity = max(authenticity, 80)
         
         return {
             'stress': int(stress),
@@ -261,46 +207,30 @@ class EmotionClassifier:
         }
     
     def train_models(self, training_data: pd.DataFrame) -> Dict:
-        """
-        Train emotion classification models
-        
-        Args:
-            training_data: DataFrame with biometric features and emotion labels
-            
-        Returns:
-            Training results and metrics
-        """
         if len(training_data) < 100 and self.verbose:
             print("Warning: Limited training data. Consider generating more samples.")
         
-        # Prepare features and labels
         X = training_data[self.feature_names].values
         y = training_data['emotion_label'].values
         
-        # Split data
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, random_state=42, stratify=y
         )
         
         results = {}
         
-        # Train each model
         for model_name, model in self.models.items():
             if self.verbose:
                 print(f"Training {model_name}...")
             
-            # Scale features
             X_train_scaled = self.scalers[model_name].fit_transform(X_train)
             X_test_scaled = self.scalers[model_name].transform(X_test)
             
-            # Train model
             model.fit(X_train_scaled, y_train)
             
-            # Evaluate
             train_score = model.score(X_train_scaled, y_train)
             test_score = model.score(X_test_scaled, y_test)
             
-            # Cross-validation
             cv_scores = cross_val_score(model, X_train_scaled, y_train, cv=5)
             
             results[model_name] = {
@@ -317,7 +247,6 @@ class EmotionClassifier:
         return results
     
     def save_models(self, filepath: str):
-        """Save trained models and scalers"""
         model_data = {
             'models': self.models,
             'scalers': self.scalers,
@@ -328,12 +257,10 @@ class EmotionClassifier:
         }
         
         joblib.dump(model_data, filepath)
-        # Only print if verbose mode is enabled
         if self.verbose:
             print(f"Models saved to {filepath}")
     
     def load_models(self, filepath: str):
-        """Load trained models and scalers"""
         try:
             model_data = joblib.load(filepath)
             self.models = model_data['models']
@@ -342,7 +269,6 @@ class EmotionClassifier:
             self.is_trained = model_data['is_trained']
             self.feature_names = model_data['feature_names']
             self.emotion_categories = model_data['emotion_categories']
-            # Only print if verbose mode is enabled
             if self.verbose:
                 print(f"Models loaded from {filepath}")
         except Exception as e:
@@ -351,21 +277,10 @@ class EmotionClassifier:
             self.is_trained = False
     
     def predict_consensus_readiness(self, biometric_data: Dict) -> Dict:
-        """
-        Predict if validator is ready for consensus participation
-        
-        Args:
-            biometric_data: Raw biometric data
-            
-        Returns:
-            Consensus readiness assessment
-        """
         metrics = self.calculate_emotional_metrics(biometric_data)
         
-        # Consensus readiness criteria
         readiness_score = 0
         
-        # Authenticity is most important
         if metrics['authenticity'] >= 90:
             readiness_score += 40
         elif metrics['authenticity'] >= 80:
@@ -373,25 +288,21 @@ class EmotionClassifier:
         else:
             readiness_score += 10
         
-        # Emotional stability
         if metrics['stress'] < 50:
             readiness_score += 20
         elif metrics['stress'] < 70:
             readiness_score += 10
         
-        # Focus level
         if metrics['focus'] >= 70:
             readiness_score += 20
         elif metrics['focus'] >= 50:
             readiness_score += 10
         
-        # Energy level (not too high, not too low)
         if 40 <= metrics['energy'] <= 80:
             readiness_score += 15
         elif 30 <= metrics['energy'] <= 90:
             readiness_score += 10
         
-        # ML confidence
         if metrics['confidence'] >= 0.8:
             readiness_score += 5
         
@@ -405,7 +316,6 @@ class EmotionClassifier:
         }
     
     def _get_recommendation(self, readiness_score: int, metrics: Dict) -> str:
-        """Generate recommendation based on readiness assessment"""
         if readiness_score >= 80:
             return "Excellent consensus readiness. Participate immediately."
         elif readiness_score >= 70:
@@ -419,12 +329,9 @@ class EmotionClassifier:
         else:
             return "Low readiness. Take time for emotional regulation."
 
-# Example usage and testing
 if __name__ == "__main__":
-    # Initialize classifier with verbose mode for testing
     classifier = EmotionClassifier(model_type='ensemble', verbose=True)
     
-    # Example biometric data
     sample_data = {
         'heart_rate': 75,
         'hrv': 35,
@@ -434,10 +341,8 @@ if __name__ == "__main__":
         'temperature': 36.8
     }
     
-    # Test emotion classification
     metrics = classifier.calculate_emotional_metrics(sample_data)
     print("Emotional Metrics:", metrics)
     
-    # Test consensus readiness
     readiness = classifier.predict_consensus_readiness(sample_data)
     print("Consensus Readiness:", readiness)

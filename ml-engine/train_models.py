@@ -12,10 +12,9 @@ from data_processing import BiometricDataProcessor
 from training_data.generate_data import EmotionalDataGenerator
 
 def main():
-    print("🧠 EmotionalChain ML Model Training")
+    print("EmotionalChain ML Model Training")
     print("=" * 50)
     
-    # Setup directories
     ml_dir = Path(__file__).parent
     models_dir = ml_dir / "models"
     models_dir.mkdir(exist_ok=True)
@@ -23,14 +22,12 @@ def main():
     data_dir = ml_dir / "training_data"
     data_dir.mkdir(exist_ok=True)
     
-    # Initialize components
     generator = EmotionalDataGenerator(str(data_dir))
     processor = BiometricDataProcessor()
     classifier = EmotionClassifier(model_type='ensemble')
     
     print("\n1. Generating training data...")
     
-    # Check if training data already exists
     existing_data_files = list(data_dir.glob("emotionalchain_static_*.csv"))
     
     if existing_data_files:
@@ -39,14 +36,12 @@ def main():
         print(f"Loaded {len(training_data)} samples from existing data")
     else:
         print("Generating new training data...")
-        # Generate comprehensive dataset
         datasets = generator.create_comprehensive_dataset(
-            base_samples=800,      # 800 samples per emotion (4800 total)
-            temporal_sequences=5,  # 5 temporal sequences
-            individuals=30         # 30 different individuals
+            base_samples=800,
+            temporal_sequences=5,
+            individuals=30
         )
         
-        # Export datasets
         generator.export_datasets(datasets, "emotionalchain")
         training_data = datasets['static']
         print(f"Generated {len(training_data)} training samples")
@@ -56,14 +51,12 @@ def main():
     
     print("\n2. Training ML models...")
     
-    # Prepare training data
     feature_columns = [
         'heart_rate', 'hrv', 'skin_conductance', 'movement',
         'respiratory_rate', 'temperature', 'acceleration_x', 
         'acceleration_y', 'acceleration_z', 'ambient_light'
     ]
     
-    # Ensure all required columns exist
     for col in feature_columns:
         if col not in training_data.columns:
             if col == 'respiratory_rate':
@@ -77,7 +70,6 @@ def main():
             elif col == 'ambient_light':
                 training_data[col] = 0.5
     
-    # Train models
     results = classifier.train_models(training_data)
     
     print("\n3. Model Training Results:")
@@ -92,7 +84,6 @@ def main():
     classifier.save_models(str(model_path))
     
     print("\n5. Testing model inference...")
-    # Test with sample data
     test_data = {
         'heart_rate': 85,
         'hrv': 25,
@@ -142,12 +133,12 @@ def main():
     
     print(f"Model metadata saved to: {metadata_path}")
     
-    print("\n✅ ML Model Training Complete!")
-    print(f"📁 Models saved to: {model_path}")
-    print(f"📊 Training data: {len(training_data)} samples")
-    print(f"🎯 Best model accuracy: {max([r['test_accuracy'] for r in results.values()]):.3f}")
+    print("\nML Model Training Complete!")
+    print(f"Models saved to: {model_path}")
+    print(f"Training data: {len(training_data)} samples")
+    print(f"Best model accuracy: {max([r['test_accuracy'] for r in results.values()]):.3f}")
     
-    print("\n🚀 Next steps:")
+    print("\nNext steps:")
     print("1. Restart your EmotionalChain server")
     print("2. Check ML engine status: GET /api/ml/status")
     print("3. Test emotion classification: POST /api/ml/test-emotion")
@@ -159,6 +150,6 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as e:
-        print(f"❌ Training failed: {e}")
+        print(f"Training failed: {e}")
         import traceback
         traceback.print_exc()

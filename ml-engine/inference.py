@@ -22,9 +22,7 @@ except ImportError:
 
 def main():
     try:
-        # Read input from stdin
         if sys.stdin.isatty():
-            # No input detected, use test data
             input_data = '{"heart_rate": 75, "hrv": 35, "skin_conductance": 0.4, "movement": 0.2}'
         else:
             input_data = sys.stdin.read().strip()
@@ -34,20 +32,16 @@ def main():
             
         biometric_data = json.loads(input_data)
         
-        # Initialize ML components
         model_path = os.path.join(os.path.dirname(__file__), 'models', 'emotionalchain_models.pkl')
         
         classifier = EmotionClassifier(model_type='ensemble')
         processor = BiometricDataProcessor()
         
-        # Load trained models (silently)
         if os.path.exists(model_path):
             classifier.load_models(model_path)
         
-        # Process biometric data
         processed_data = processor.process_realtime_data(biometric_data)
         
-        # Calculate emotional metrics
         if classifier.is_trained:
             emotional_metrics = classifier.calculate_emotional_metrics(processed_data)
             readiness_assessment = classifier.predict_consensus_readiness(processed_data)
@@ -65,7 +59,6 @@ def main():
                 "ml_used": True
             }
         else:
-            # Fallback to rule-based calculation
             emotional_metrics = calculate_rule_based_emotions(biometric_data)
             response = {
                 "stress": emotional_metrics["stress"],
@@ -79,11 +72,9 @@ def main():
                 "ml_used": False
             }
         
-        # Output ONLY JSON to stdout
         print(json.dumps(response))
         
     except Exception as e:
-        # Error fallback - only JSON to stdout
         error_response = {
             "error": str(e),
             "stress": 50,
@@ -100,13 +91,11 @@ def main():
         sys.exit(1)
 
 def calculate_rule_based_emotions(biometric_data):
-    """Fallback rule-based emotion calculation"""
     heart_rate = biometric_data.get('heart_rate', 70)
     hrv = biometric_data.get('hrv', 30)
     skin_conductance = biometric_data.get('skin_conductance', 0.5)
     movement = biometric_data.get('movement', 0.1)
     
-    # Stress calculation
     stress = 0
     if heart_rate > 100: stress += 30
     if heart_rate > 120: stress += 20
@@ -114,27 +103,23 @@ def calculate_rule_based_emotions(biometric_data):
     if skin_conductance > 0.7: stress += 25
     stress = min(stress, 100)
     
-    # Energy calculation
     energy = 50
     if 80 <= heart_rate <= 100: energy += 20
     if movement > 0.5: energy += 15
     if hrv > 40: energy += 15
     energy = min(energy, 100)
     
-    # Focus calculation
     focus = 70
     if hrv > 30 and stress < 30: focus += 20
     if stress > 70: focus -= 30
     if movement < 0.2: focus += 10
     focus = max(0, min(focus, 100))
     
-    # Authenticity calculation
     authenticity = 100
     if heart_rate % 5 == 0: authenticity -= 10
     if heart_rate < 40 or heart_rate > 200: authenticity -= 30
     authenticity = max(authenticity, 0)
     
-    # Determine emotion category
     emotion_category = 'neutral'
     if stress > 70:
         emotion_category = 'stressed'

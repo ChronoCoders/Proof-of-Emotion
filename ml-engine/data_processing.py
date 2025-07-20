@@ -10,7 +10,6 @@ from typing import Dict, List, Tuple, Optional
 import warnings
 warnings.filterwarnings('ignore')
 
-# Import scipy safely
 try:
     from scipy import signal
     SCIPY_AVAILABLE = True
@@ -20,21 +19,9 @@ except ImportError:
 class BiometricDataProcessor:
     """
     Advanced biometric data processor for EmotionalChain
-    
-    Features:
-    - Real-time signal processing
-    - Feature extraction
-    - Data validation and cleaning
-    - Synthetic data generation for training
     """
     
     def __init__(self, sampling_rate: int = 100):
-        """
-        Initialize data processor
-        
-        Args:
-            sampling_rate: Sampling rate in Hz for signal processing
-        """
         self.sampling_rate = sampling_rate
         self.feature_extractors = {
             'heart_rate': self._extract_heart_rate_features,
@@ -44,60 +31,40 @@ class BiometricDataProcessor:
         }
     
     def process_realtime_data(self, raw_data: Dict) -> Dict:
-        """
-        Process real-time biometric data
-        
-        Args:
-            raw_data: Raw sensor data from devices
-            
-        Returns:
-            Processed and validated biometric features
-        """
         processed_data = {}
         
-        # Validate and clean data
         validated_data = self._validate_data(raw_data)
         
-        # Extract basic features
         processed_data['heart_rate'] = self._process_heart_rate(validated_data.get('heart_rate', 70))
         processed_data['hrv'] = self._process_hrv(validated_data.get('hrv', 30))
         processed_data['skin_conductance'] = self._process_gsr(validated_data.get('skin_conductance', 0.5))
         processed_data['movement'] = self._process_movement(validated_data.get('movement', 0.1))
         
-        # Add derived features
         processed_data.update(self._calculate_derived_features(processed_data))
         
-        # Add quality metrics
         processed_data['data_quality'] = self._assess_data_quality(validated_data)
         processed_data['timestamp'] = datetime.now().isoformat()
         
         return processed_data
     
     def _validate_data(self, raw_data: Dict) -> Dict:
-        """Validate and clean raw biometric data"""
         validated = {}
         
-        # Heart rate validation (40-200 BPM)
         hr = raw_data.get('heart_rate', 70)
         validated['heart_rate'] = max(40, min(200, hr)) if isinstance(hr, (int, float)) else 70
         
-        # HRV validation (5-100 ms)
         hrv = raw_data.get('hrv', 30)
         validated['hrv'] = max(5, min(100, hrv)) if isinstance(hrv, (int, float)) else 30
         
-        # Skin conductance validation (0-1)
         gsr = raw_data.get('skin_conductance', 0.5)
         validated['skin_conductance'] = max(0, min(1, gsr)) if isinstance(gsr, (int, float)) else 0.5
         
-        # Movement validation (0-1)
         movement = raw_data.get('movement', 0.1)
         validated['movement'] = max(0, min(1, movement)) if isinstance(movement, (int, float)) else 0.1
         
         return validated
     
     def _process_heart_rate(self, heart_rate: float) -> float:
-        """Process heart rate data with noise reduction"""
-        # Simple moving average for noise reduction
         if hasattr(self, '_hr_history'):
             self._hr_history.append(heart_rate)
             if len(self._hr_history) > 5:
@@ -108,35 +75,24 @@ class BiometricDataProcessor:
             return heart_rate
     
     def _process_hrv(self, hrv: float) -> float:
-        """Process HRV data with validation"""
         return max(5, min(100, hrv))
     
     def _process_gsr(self, gsr: float) -> float:
-        """Process galvanic skin response data"""
         return max(0, min(1, gsr))
     
     def _process_movement(self, movement: float) -> float:
-        """Process movement/acceleration data"""
         return max(0, min(1, movement))
     
     def _calculate_derived_features(self, data: Dict) -> Dict:
-        """Calculate derived features from basic biometrics"""
         derived = {}
         
-        # Autonomic balance (HRV/HR ratio)
         derived['autonomic_balance'] = data['hrv'] / data['heart_rate'] * 1000
-        
-        # Arousal index (combination of HR and GSR)
         derived['arousal_index'] = (data['heart_rate'] / 100 + data['skin_conductance']) / 2
-        
-        # Stability index (inverse of movement + HRV component)
         derived['stability_index'] = (1 - data['movement']) * (data['hrv'] / 100)
         
-        # Estimated respiratory rate (simplified)
         derived['respiratory_rate'] = 12 + (data['heart_rate'] - 70) * 0.1
         derived['respiratory_rate'] = max(8, min(25, derived['respiratory_rate']))
         
-        # Temperature estimate (simplified)
         base_temp = 36.5
         temp_variation = (data['heart_rate'] - 70) * 0.01
         derived['temperature'] = base_temp + temp_variation
@@ -144,10 +100,8 @@ class BiometricDataProcessor:
         return derived
     
     def _assess_data_quality(self, data: Dict) -> float:
-        """Assess overall data quality score (0-1)"""
         quality_score = 1.0
         
-        # Check for extreme values
         hr = data.get('heart_rate', 70)
         if hr < 50 or hr > 150:
             quality_score -= 0.2
@@ -156,14 +110,12 @@ class BiometricDataProcessor:
         if hrv < 10 or hrv > 80:
             quality_score -= 0.1
         
-        # Check for unrealistic combinations
         if hr > 120 and data.get('movement', 0) < 0.1:
             quality_score -= 0.3
         
         return max(0, quality_score)
     
     def _extract_heart_rate_features(self, hr_data: List[float]) -> Dict:
-        """Extract features from heart rate time series"""
         if not hr_data:
             return {}
         
@@ -175,7 +127,6 @@ class BiometricDataProcessor:
         }
     
     def _extract_hrv_features(self, hrv_data: List[float]) -> Dict:
-        """Extract features from HRV time series"""
         if not hrv_data:
             return {}
         
@@ -186,7 +137,6 @@ class BiometricDataProcessor:
         }
     
     def _extract_gsr_features(self, gsr_data: List[float]) -> Dict:
-        """Extract features from GSR time series"""
         if not gsr_data:
             return {}
         
@@ -197,7 +147,6 @@ class BiometricDataProcessor:
         }
     
     def _extract_movement_features(self, movement_data: List[float]) -> Dict:
-        """Extract features from movement time series"""
         if not movement_data:
             return {}
         
@@ -208,9 +157,6 @@ class BiometricDataProcessor:
         }
     
     def generate_synthetic_training_data(self, num_samples: int = 1000) -> pd.DataFrame:
-        """
-        Generate synthetic biometric data for training ML models
-        """
         np.random.seed(42)
         data = []
         
@@ -265,7 +211,6 @@ class BiometricDataProcessor:
         return pd.DataFrame(data)
     
     def _calculate_trend(self, series: List[float]) -> float:
-        """Calculate trend in time series"""
         if len(series) < 2:
             return 0
         x = np.arange(len(series))
@@ -273,7 +218,6 @@ class BiometricDataProcessor:
         return coeffs[0]
     
     def _count_peaks(self, series: List[float], prominence: float = 0.1) -> int:
-        """Count significant peaks in signal"""
         if len(series) < 3:
             return 0
         if not SCIPY_AVAILABLE:
@@ -285,7 +229,6 @@ class BiometricDataProcessor:
             return 0
     
     def detect_anomalies(self, biometric_data: Dict, historical_data: List[Dict] = None) -> Dict:
-        """Detect anomalies in biometric data for anti-spoofing"""
         anomalies = {
             'has_anomaly': False,
             'anomaly_score': 0.0,
@@ -325,13 +268,11 @@ class BiometricDataProcessor:
         anomalies['confidence'] = max(0, 1 - anomalies['anomaly_score'])
         return anomalies
 
-# Example usage and testing
 if __name__ == "__main__":
     processor = BiometricDataProcessor()
     
     print("Testing BiometricDataProcessor...")
     
-    # Test data processing
     sample_data = {
         'heart_rate': 85,
         'hrv': 25,
@@ -340,15 +281,13 @@ if __name__ == "__main__":
     }
     
     processed = processor.process_realtime_data(sample_data)
-    print("✅ Data processing test passed")
+    print("Data processing test passed")
     
-    # Test synthetic data generation
     training_data = processor.generate_synthetic_training_data(100)
-    print(f"✅ Generated {len(training_data)} synthetic samples")
+    print(f"Generated {len(training_data)} synthetic samples")
     
-    # Test anomaly detection
     anomaly_data = {'heart_rate': 200, 'hrv': 5, 'skin_conductance': 0.9, 'movement': 0.0}
     anomalies = processor.detect_anomalies(anomaly_data)
-    print("✅ Anomaly detection test passed")
+    print("Anomaly detection test passed")
     
     print("All tests passed!")
