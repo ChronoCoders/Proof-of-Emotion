@@ -4,8 +4,6 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import { requireAuth, loginHandler, logoutHandler, loginPageHandler } from "./middleware/auth";
 
-// EmotionalChain - Proof of Emotion Blockchain Platform
-// Initialize environment variables for Windows compatibility
 if (!process.env.DATABASE_URL) {
   console.warn('DATABASE_URL not set, using in-memory SQLite for EmotionalChain');
   process.env.DATABASE_URL = 'sqlite://:memory:';
@@ -15,28 +13,25 @@ if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = 'development';
 }
 
-// Windows-compatible network configuration
 const isWindows = process.platform === 'win32';
 const isDevelopment = process.env.NODE_ENV === 'development';
 
 const app = express();
 
-// Session configuration
 app.use(session({
   secret: process.env.SESSION_SECRET || 'emotionalchain-session-secret-key-2025',
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: false, // Set to true in production with HTTPS
+    secure: false,
     httpOnly: true,
-    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Enhanced logging middleware for EmotionalChain
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -67,7 +62,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// CORS middleware for development
 if (isDevelopment) {
   app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -90,14 +84,10 @@ if (isDevelopment) {
     log(`Platform: ${process.platform} ${isWindows ? '(Windows)' : ''}`);
     log(`Authentication: Enabled (chronocoder/talber1726)`);
     
-    // PUBLIC ROUTES FIRST (before authentication)
-    
-    // Authentication routes (public)
     app.get('/login', loginPageHandler);
     app.post('/auth/login', loginHandler);
     app.post('/auth/logout', logoutHandler);
 
-    // Health check (public)
     app.get('/health', (req, res) => {
       res.json({ 
         status: 'healthy', 
@@ -108,21 +98,16 @@ if (isDevelopment) {
       });
     });
 
-    // Register all API routes FIRST (before auth middleware)
     const server = await registerRoutes(app);
     
-    // THEN apply authentication to protect frontend routes
-    // Only protect the frontend routes, not API routes
     const protectedFrontendRoutes = ['/dashboard', '/validators', '/consensus', '/biometrics', '/testing-suite', '/analytics'];
     
     protectedFrontendRoutes.forEach(route => {
       app.get(route, requireAuth, (req, res, next) => {
-        // Let Vite handle the frontend routing after auth check
         next();
       });
     });
 
-    // Enhanced error handling
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
@@ -139,7 +124,6 @@ if (isDevelopment) {
       }
     });
 
-    // Setup Vite development server or static serving
     if (isDevelopment) {
       log("Setting up Vite development server...");
       await setupVite(app, server);
@@ -148,7 +132,6 @@ if (isDevelopment) {
       serveStatic(app);
     }
 
-    // Root redirect with authentication check
     app.get('/', (req, res) => {
       if (req.session && req.session.authenticated) {
         res.redirect('/dashboard');
@@ -157,30 +140,24 @@ if (isDevelopment) {
       }
     });
 
-    // Network configuration - Windows compatible
     const port = parseInt(process.env.PORT || '5000', 10);
     
-    // Choose host based on platform and environment
     let host: string;
     if (isWindows && isDevelopment) {
-      // Windows development: use localhost to avoid ENOTSUP error
       host = 'localhost';
       log("Windows detected: Using localhost binding for development");
     } else if (isDevelopment) {
-      // Unix development: use localhost for consistency
       host = 'localhost';
     } else {
-      // Production: use 0.0.0.0 for external access
       host = '0.0.0.0';
     }
 
-    // Server startup with proper error handling
     const startServer = () => {
       return new Promise<void>((resolve, reject) => {
         const serverInstance = server.listen({
           port,
           host,
-          reusePort: !isWindows, // Windows doesn't support reusePort
+          reusePort: !isWindows,
         }, () => {
           log(`EmotionalChain server running on http://${host}:${port}`);
           log(`Access your revolutionary blockchain at: http://localhost:${port}`);
@@ -198,7 +175,6 @@ if (isDevelopment) {
         serverInstance.on('error', (err: any) => {
           if (err.code === 'ENOTSUP' && host === '0.0.0.0' && isWindows) {
             log("Windows network binding issue detected, retrying with localhost...");
-            // Retry with localhost on Windows
             server.listen({
               port,
               host: 'localhost',
@@ -223,7 +199,6 @@ if (isDevelopment) {
 
     await startServer();
 
-    // Graceful shutdown handling
     const gracefulShutdown = () => {
       log("EmotionalChain server shutting down gracefully...");
       server.close(() => {
@@ -235,7 +210,6 @@ if (isDevelopment) {
     process.on('SIGTERM', gracefulShutdown);
     process.on('SIGINT', gracefulShutdown);
 
-    // Windows-specific signal handling
     if (isWindows) {
       process.on('SIGBREAK', gracefulShutdown);
     }

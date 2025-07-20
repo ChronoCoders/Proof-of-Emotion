@@ -58,13 +58,12 @@ export class ProofOfEmotion {
 
   private async initializeMLEngine() {
     try {
-      // Check if ML models exist
       const fs = await import('fs').then(module => module.promises);
       await fs.access(this.mlModelPath);
       this.mlEngineEnabled = true;
-      console.log('🧠 EmotionalChain: ML Engine initialized successfully');
+      console.log('EmotionalChain: ML Engine initialized successfully');
     } catch (error) {
-      console.log('⚠️ EmotionalChain: ML Engine not available, using rule-based fallback');
+      console.log('EmotionalChain: ML Engine not available, using rule-based fallback');
       this.mlEngineEnabled = false;
     }
   }
@@ -95,17 +94,15 @@ export class ProofOfEmotion {
       throw new Error("Validator not registered");
     }
 
-    // Enhanced biometric data preprocessing
     const processedBiometrics = this.preprocessBiometricData(biometricData);
     
-    // Calculate emotional metrics using ML if available
     let emotionalMetrics: EmotionalMetrics;
     
     if (this.mlEngineEnabled) {
       try {
         emotionalMetrics = await this.calculateEmotionalMetricsML(processedBiometrics);
       } catch (error) {
-        console.warn('🔄 EmotionalChain: ML calculation failed, falling back to rule-based:', error);
+        console.warn('EmotionalChain: ML calculation failed, falling back to rule-based:', error);
         emotionalMetrics = this.calculateEmotionalMetricsRuleBased(processedBiometrics);
       }
     } else {
@@ -151,7 +148,6 @@ export class ProofOfEmotion {
   }
 
   private preprocessBiometricData(data: BiometricData): BiometricData {
-    // Enhanced preprocessing with validation and normalization
     const processed: BiometricData = {
       heartRate: this.validateHeartRate(data.heartRate),
       hrv: this.validateHRV(data.hrv || 0),
@@ -199,7 +195,6 @@ export class ProofOfEmotion {
 
   private async calculateEmotionalMetricsML(biometricData: BiometricData): Promise<EmotionalMetrics> {
     return new Promise((resolve, reject) => {
-      // Prepare data for Python ML engine
       const mlInput = {
         heart_rate: biometricData.heartRate,
         hrv: biometricData.hrv,
@@ -213,7 +208,6 @@ export class ProofOfEmotion {
         ambient_light: biometricData.ambientLight
       };
 
-      // Spawn Python process for ML inference
       const pythonPath = path.join(process.cwd(), 'ml-engine', 'inference.py');
       const pythonProcess = spawn('python', [pythonPath], {
         stdio: ['pipe', 'pipe', 'pipe']
@@ -257,11 +251,9 @@ export class ProofOfEmotion {
         }
       });
 
-      // Send input data to Python process
       pythonProcess.stdin.write(JSON.stringify(mlInput));
       pythonProcess.stdin.end();
 
-      // Timeout after 5 seconds
       setTimeout(() => {
         pythonProcess.kill();
         reject(new Error('ML inference timeout'));
@@ -293,7 +285,6 @@ export class ProofOfEmotion {
 
     const authenticity = this.calculateAuthenticity(biometricData);
 
-    // Determine emotion category based on rule-based logic
     let emotionCategory = 'neutral';
     if (stress > 70) emotionCategory = 'stressed';
     else if (stress < 20 && energy < 40) emotionCategory = 'calm';
@@ -305,7 +296,7 @@ export class ProofOfEmotion {
       energy,
       focus,
       authenticity,
-      confidence: 0.85, // Fixed confidence for rule-based
+      confidence: 0.85,
       emotionCategory
     };
   }
@@ -313,27 +304,21 @@ export class ProofOfEmotion {
   calculateAuthenticity(biometricData: BiometricData): number {
     let authenticity = 100;
     
-    // Enhanced authenticity checks
     const { heartRate, hrv = 0, skinConductance = 0, movement = 0 } = biometricData;
     
-    // Check for obvious spoofing patterns
     if (heartRate % 5 === 0 && heartRate % 10 === 0) authenticity -= 15;
     
-    // Physiological bounds checking
     if (heartRate < 40 || heartRate > 200) authenticity -= 40;
     if (hrv < 5 || hrv > 100) authenticity -= 20;
     
-    // Correlation consistency
     const expectedConductance = (heartRate - 60) / 100;
     const conductanceDiff = Math.abs(skinConductance - expectedConductance);
     if (conductanceDiff > 0.4) authenticity -= 20;
     
-    // Movement vs heart rate consistency
     if (heartRate > 120 && movement < 0.05) authenticity -= 25;
     if (heartRate < 60 && movement > 0.8) authenticity -= 20;
     
-    // HRV vs heart rate biological relationship
-    if (heartRate > 100 && hrv > 60) authenticity -= 30; // Unlikely combination
+    if (heartRate > 100 && hrv > 60) authenticity -= 30;
     
     return Math.max(0, authenticity);
   }
@@ -345,7 +330,6 @@ export class ProofOfEmotion {
       throw new Error(`Insufficient validators for consensus. Need ${this.minValidators}, got ${validProofs.length}`);
     }
 
-    // Enhanced consensus calculation with ML-aware processing
     const proofsWithStakes = await Promise.all(
       validProofs.map(async (proof) => {
         const validator = await storage.getValidator(proof.validatorAddress);
@@ -374,7 +358,6 @@ export class ProofOfEmotion {
 
     const agreementScore = this.calculateEmotionalAgreement(proofsWithStakes);
     
-    // Enhanced consensus metadata
     const mlProcessedCount = proofsWithStakes.filter(p => p.mlProcessed).length;
     
     const consensusData: InsertConsensusBlock = {
@@ -463,12 +446,10 @@ export class ProofOfEmotion {
     return `poe_v2_${validator}_${metrics.stress}_${metrics.energy}_${metrics.focus}_${Date.now()}_${this.mlEngineEnabled ? 'ml' : 'rule'}`;
   }
 
-  // Public method to check ML engine status
   public isMLEngineEnabled(): boolean {
     return this.mlEngineEnabled;
   }
 
-  // Public method to get ML engine statistics
   public getMLEngineStats(): any {
     return {
       enabled: this.mlEngineEnabled,
@@ -485,7 +466,6 @@ export class ProofOfEmotion {
     };
   }
 
-  // Public method for testing ML functionality
   public async testMLClassification(biometricData: BiometricData): Promise<EmotionalMetrics> {
     const processedBiometrics = this.preprocessBiometricData(biometricData);
     

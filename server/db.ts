@@ -3,19 +3,16 @@ import Database from "better-sqlite3";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import * as schema from "../shared/schema";
 
-// Set default DATABASE_URL if not provided
 const DATABASE_URL = process.env.DATABASE_URL || 'sqlite://:memory:';
 
 let db: ReturnType<typeof drizzle>;
 
 try {
   if (DATABASE_URL === 'sqlite://:memory:') {
-    // In-memory SQLite database for development
-    console.log('🗄️ EmotionalChain: Using in-memory SQLite database');
+    console.log('EmotionalChain: Using in-memory SQLite database');
     const sqlite = new Database(':memory:');
     db = drizzle(sqlite, { schema });
     
-    // Create tables for in-memory database
     sqlite.exec(`
       CREATE TABLE IF NOT EXISTS validators (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -71,29 +68,25 @@ try {
       );
     `);
     
-    console.log('✅ EmotionalChain: In-memory database tables created');
+    console.log('EmotionalChain: In-memory database tables created');
     
   } else if (DATABASE_URL.startsWith('sqlite:')) {
-    // File-based SQLite
     const dbPath = DATABASE_URL.replace('sqlite:', '');
-    console.log(`🗄️ EmotionalChain: Using SQLite database at ${dbPath}`);
+    console.log(`EmotionalChain: Using SQLite database at ${dbPath}`);
     const sqlite = new Database(dbPath);
     db = drizzle(sqlite, { schema });
     
   } else {
-    // Other database types would go here
     throw new Error(`Unsupported database URL: ${DATABASE_URL}`);
   }
   
 } catch (error) {
-  console.error('❌ EmotionalChain: Database initialization failed:', error);
+  console.error('EmotionalChain: Database initialization failed:', error);
   
-  // Fallback to in-memory database
-  console.log('🔄 EmotionalChain: Falling back to in-memory database');
+  console.log('EmotionalChain: Falling back to in-memory database');
   const sqlite = new Database(':memory:');
   db = drizzle(sqlite, { schema });
   
-  // Create basic tables
   sqlite.exec(`
     CREATE TABLE IF NOT EXISTS validators (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

@@ -27,7 +27,6 @@ export class WebSocketService {
       console.log('WebSocket client connected');
       this.clients.add(ws);
 
-      // Send welcome message
       this.sendToClient(ws, {
         type: 'connection',
         data: { 
@@ -38,7 +37,6 @@ export class WebSocketService {
         timestamp: new Date().toISOString()
       });
 
-      // Handle client messages
       ws.on('message', (message: Buffer) => {
         try {
           const parsedMessage = JSON.parse(message.toString());
@@ -48,20 +46,18 @@ export class WebSocketService {
         }
       });
 
-      // Handle client disconnect
       ws.on('close', () => {
         console.log('WebSocket client disconnected');
         this.clients.delete(ws);
       });
 
-      // Handle connection errors
       ws.on('error', (error) => {
         console.error('WebSocket client error:', error);
         this.clients.delete(ws);
       });
     });
 
-    console.log('✅ EmotionalChain WebSocket service initialized on /ws');
+    console.log('EmotionalChain WebSocket service initialized on /ws');
   }
 
   private handleClientMessage(ws: WebSocket, message: any) {
@@ -75,7 +71,6 @@ export class WebSocketService {
         break;
 
       case 'subscribe':
-        // Handle subscription to specific events
         this.sendToClient(ws, {
           type: 'subscribed',
           data: { events: message.events || ['all'] },
@@ -116,7 +111,6 @@ export class WebSocketService {
     });
   }
 
-  // Public methods for broadcasting events
   broadcastValidatorUpdate(validator: Validator) {
     this.broadcast({
       type: 'validator_update',
@@ -178,7 +172,6 @@ export class WebSocketService {
     });
   }
 
-  // Network statistics broadcast
   broadcastNetworkStats(stats: any) {
     this.broadcast({
       type: 'network_stats',
@@ -191,7 +184,6 @@ export class WebSocketService {
     });
   }
 
-  // ML-specific broadcasts
   broadcastMLStatus(status: any) {
     this.broadcast({
       type: 'ml_status',
@@ -208,12 +200,10 @@ export class WebSocketService {
     });
   }
 
-  // Get connection count
   getConnectionCount(): number {
     return this.clients.size;
   }
 
-  // Broadcast system message
   broadcastSystemMessage(message: string, type: 'info' | 'warning' | 'error' = 'info') {
     this.broadcast({
       type: 'system_message',

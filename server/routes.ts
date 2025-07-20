@@ -9,10 +9,8 @@ import { insertValidatorSchema } from "../shared/schema";
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
-  // Initialize WebSocket service
   websocketService.initialize(httpServer);
 
-  // PoE Network Routes
   app.post('/api/validators', async (req, res) => {
     try {
       const validatorData = insertValidatorSchema.parse(req.body);
@@ -50,7 +48,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Emotional Proof Routes
   app.post('/api/emotional-proofs', async (req, res) => {
     try {
       const { validatorAddress, biometricData } = req.body;
@@ -84,7 +81,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Consensus Routes
   app.post('/api/consensus/:blockHeight', async (req, res) => {
     try {
       const blockHeight = parseInt(req.params.blockHeight);
@@ -120,7 +116,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Network Statistics Routes
   app.get('/api/network/stats', async (req, res) => {
     try {
       const stats = await storage.getNetworkStats();
@@ -140,7 +135,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Fitbit OAuth Routes
   app.get('/api/auth/fitbit', (req, res) => {
     try {
       const { validatorAddress } = req.query;
@@ -184,7 +178,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Biometric Data Routes
   app.get('/api/biometric/:validatorAddress', async (req, res) => {
     try {
       const { validatorAddress } = req.params;
@@ -200,8 +193,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const enrichedData = {
         ...biometricData,
         hrv,
-        skinConductance: 0.3 + Math.random() * 0.4, // Simulated since not available from Fitbit
-        movement: Math.random() * 0.5 // Simulated based on activity
+        skinConductance: 0.3 + Math.random() * 0.4,
+        movement: Math.random() * 0.5
       };
 
       websocketService.broadcastBiometricUpdate({ validatorAddress, data: enrichedData });
@@ -230,7 +223,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         movement: Math.random() * 0.5
       };
 
-      // Generate emotional proof with real data
       const proof = await poeAlgorithm.generateEmotionalProof(validatorAddress, enrichedData);
       
       websocketService.broadcastEmotionalProof(proof);
@@ -242,14 +234,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Testing Routes
   app.post('/api/testing/stress-test', async (req, res) => {
     try {
       const { rounds = 10, validatorCount = 5 } = req.body;
       const results = [];
       
       for (let i = 0; i < rounds; i++) {
-        // Simulate biometric data for stress test
         const validators = await storage.getActiveValidators();
         const selectedValidators = validators.slice(0, Math.min(validatorCount, validators.length));
         
@@ -268,7 +258,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const consensus = await poeAlgorithm.calculatePoEConsensus(1000 + i);
         results.push(consensus);
         
-        // Small delay between rounds
         await new Promise(resolve => setTimeout(resolve, 100));
       }
       
@@ -284,7 +273,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Data Export Routes for External Systems
   app.get('/api/export/validators', async (req, res) => {
     try {
       const format = req.query.format || 'json';
@@ -345,7 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/export/emotional-proofs', async (req, res) => {
     try {
       const format = req.query.format || 'json';
-      const proofs = await storage.getValidEmotionalProofs(poeAlgorithm.validationWindow * 10); // Extended window for export
+      const proofs = await storage.getValidEmotionalProofs(poeAlgorithm.validationWindow * 10);
       
       if (format === 'csv') {
         const csvHeader = 'id,validatorAddress,timestamp,heartRate,hrv,stressLevel,energyLevel,focusLevel,authenticityScore\n';
@@ -392,7 +380,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       if (format === 'csv') {
-        // For CSV, we'll export just the network stats summary
         const csvData = [
           'metric,value',
           `totalValidators,${stats.totalValidators}`,
@@ -417,7 +404,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // ML Engine Status and Testing Routes
   app.get('/api/ml/status', async (req, res) => {
     try {
       const mlStats = poeAlgorithm.getMLEngineStats();
@@ -439,7 +425,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: 'Biometric data required' });
       }
 
-      // Test emotion classification without creating proof
       const testData = {
         heartRate: biometricData.heartRate || 70,
         hrv: biometricData.hrv || 30,
@@ -448,7 +433,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         timestamp: Date.now()
       };
 
-      // Use the new ML test method (will try ML first, fallback to rule-based)
       const metrics = await poeAlgorithm.testMLClassification(testData);
       
       res.json({
@@ -483,7 +467,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Enhanced ML Testing Route - Live Demo
   app.post('/api/ml/demo', async (req, res) => {
     try {
       const demoScenarios = [
