@@ -1,7 +1,7 @@
 {
   "model_info": {
     "version": "2.0.0",
-    "training_date": "2025-07-19T17:24:03.519559",
+    "training_date": "2025-07-20T17:08:36.793531",
     "total_samples": 4800,
     "emotion_categories": [
       "focused",
@@ -66,7 +66,7 @@
       "stress": 20,
       "energy": 70,
       "focus": 95,
-      "authenticity": 92,
+      "authenticity": 85,
       "confidence": 0.8656247059113253,
       "emotion_category": "focused",
       "ml_prediction": 2
@@ -78,7 +78,7 @@
         "stress": 20,
         "energy": 70,
         "focus": 95,
-        "authenticity": 80,
+        "authenticity": 83,
         "confidence": 0.8656247059113253,
         "emotion_category": "focused",
         "ml_prediction": 2

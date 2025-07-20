@@ -28,14 +28,16 @@ class EmotionClassifier:
     - Consensus readiness assessment
     """
     
-    def __init__(self, model_type: str = 'ensemble'):
+    def __init__(self, model_type: str = 'ensemble', verbose: bool = False):
         """
         Initialize emotion classifier
         
         Args:
             model_type: 'random_forest', 'gradient_boost', 'neural_network', or 'ensemble'
+            verbose: Whether to print debug messages
         """
         self.model_type = model_type
+        self.verbose = verbose
         self.models = {}
         self.scalers = {}
         self.is_trained = False
@@ -268,7 +270,7 @@ class EmotionClassifier:
         Returns:
             Training results and metrics
         """
-        if len(training_data) < 100:
+        if len(training_data) < 100 and self.verbose:
             print("Warning: Limited training data. Consider generating more samples.")
         
         # Prepare features and labels
@@ -284,7 +286,8 @@ class EmotionClassifier:
         
         # Train each model
         for model_name, model in self.models.items():
-            print(f"Training {model_name}...")
+            if self.verbose:
+                print(f"Training {model_name}...")
             
             # Scale features
             X_train_scaled = self.scalers[model_name].fit_transform(X_train)
@@ -307,7 +310,8 @@ class EmotionClassifier:
                 'cv_std': cv_scores.std()
             }
             
-            print(f"{model_name}: Train={train_score:.3f}, Test={test_score:.3f}, CV={cv_scores.mean():.3f}±{cv_scores.std():.3f}")
+            if self.verbose:
+                print(f"{model_name}: Train={train_score:.3f}, Test={test_score:.3f}, CV={cv_scores.mean():.3f}±{cv_scores.std():.3f}")
         
         self.is_trained = True
         return results
@@ -324,7 +328,9 @@ class EmotionClassifier:
         }
         
         joblib.dump(model_data, filepath)
-        print(f"Models saved to {filepath}")
+        # Only print if verbose mode is enabled
+        if self.verbose:
+            print(f"Models saved to {filepath}")
     
     def load_models(self, filepath: str):
         """Load trained models and scalers"""
@@ -336,9 +342,12 @@ class EmotionClassifier:
             self.is_trained = model_data['is_trained']
             self.feature_names = model_data['feature_names']
             self.emotion_categories = model_data['emotion_categories']
-            print(f"Models loaded from {filepath}")
+            # Only print if verbose mode is enabled
+            if self.verbose:
+                print(f"Models loaded from {filepath}")
         except Exception as e:
-            print(f"Error loading models: {e}")
+            if self.verbose:
+                print(f"Error loading models: {e}")
             self.is_trained = False
     
     def predict_consensus_readiness(self, biometric_data: Dict) -> Dict:
@@ -412,8 +421,8 @@ class EmotionClassifier:
 
 # Example usage and testing
 if __name__ == "__main__":
-    # Initialize classifier
-    classifier = EmotionClassifier(model_type='ensemble')
+    # Initialize classifier with verbose mode for testing
+    classifier = EmotionClassifier(model_type='ensemble', verbose=True)
     
     # Example biometric data
     sample_data = {

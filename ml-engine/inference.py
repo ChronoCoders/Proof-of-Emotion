@@ -1,9 +1,4 @@
 #!/usr/bin/env python3
-"""
-EmotionalChain ML Inference Script
-Real-time emotion classification for PoE consensus
-"""
-
 import sys
 import json
 import os
@@ -14,7 +9,6 @@ try:
     from emotion_classifier import EmotionClassifier
     from data_processing import BiometricDataProcessor
 except ImportError:
-    # Fallback for when packages aren't available
     print(json.dumps({
         "error": "ML dependencies not available",
         "stress": 50,
@@ -29,7 +23,15 @@ except ImportError:
 def main():
     try:
         # Read input from stdin
-        input_data = sys.stdin.read().strip()
+        if sys.stdin.isatty():
+            # No input detected, use test data
+            input_data = '{"heart_rate": 75, "hrv": 35, "skin_conductance": 0.4, "movement": 0.2}'
+        else:
+            input_data = sys.stdin.read().strip()
+        
+        if not input_data:
+            raise ValueError("No input data received")
+            
         biometric_data = json.loads(input_data)
         
         # Initialize ML components
@@ -38,32 +40,28 @@ def main():
         classifier = EmotionClassifier(model_type='ensemble')
         processor = BiometricDataProcessor()
         
-        # Try to load trained models
+        # Load trained models (silently)
         if os.path.exists(model_path):
             classifier.load_models(model_path)
-        else:
-            # Models not trained yet, use rule-based fallback
-            pass
         
         # Process biometric data
         processed_data = processor.process_realtime_data(biometric_data)
         
         # Calculate emotional metrics
         if classifier.is_trained:
-            # Use ML models
             emotional_metrics = classifier.calculate_emotional_metrics(processed_data)
             readiness_assessment = classifier.predict_consensus_readiness(processed_data)
             
             response = {
-                "stress": emotional_metrics["stress"],
-                "energy": emotional_metrics["energy"], 
-                "focus": emotional_metrics["focus"],
-                "authenticity": emotional_metrics["authenticity"],
-                "confidence": emotional_metrics["confidence"],
-                "emotion_category": emotional_metrics["emotion_category"],
-                "ml_prediction": emotional_metrics.get("ml_prediction", 0),
-                "consensus_ready": readiness_assessment["consensus_ready"],
-                "readiness_score": readiness_assessment["readiness_score"],
+                "stress": int(emotional_metrics["stress"]),
+                "energy": int(emotional_metrics["energy"]), 
+                "focus": int(emotional_metrics["focus"]),
+                "authenticity": int(emotional_metrics["authenticity"]),
+                "confidence": float(emotional_metrics["confidence"]),
+                "emotion_category": str(emotional_metrics["emotion_category"]),
+                "ml_prediction": int(emotional_metrics.get("ml_prediction", 0)),
+                "consensus_ready": bool(readiness_assessment["consensus_ready"]),
+                "readiness_score": int(readiness_assessment["readiness_score"]),
                 "ml_used": True
             }
         else:
@@ -81,11 +79,11 @@ def main():
                 "ml_used": False
             }
         
-        # Output JSON response
+        # Output ONLY JSON to stdout
         print(json.dumps(response))
         
     except Exception as e:
-        # Error fallback
+        # Error fallback - only JSON to stdout
         error_response = {
             "error": str(e),
             "stress": 50,
